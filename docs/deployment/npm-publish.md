@@ -4,7 +4,7 @@
 
 ## 前置条件
 
-1. **npm 账号**：确保你有 npm 账号并已登录
+1. **npm 账号**：手动发布时需要 npm 账号并已登录；GitHub Actions 自动发布只需要仓库里的 `NPM_TOKEN`
    ```bash
    npm login
    ```
@@ -41,7 +41,7 @@ pnpm changeset
 当准备发布时，运行：
 
 ```bash
-pnpm version
+pnpm changeset version
 ```
 
 这会：
@@ -104,7 +104,7 @@ git add .
 git commit -m "feat: 添加新功能"
 
 # 3. 更新版本
-pnpm version
+pnpm changeset version
 
 # 4. 提交版本变更
 git add .
@@ -129,7 +129,7 @@ git add .
 git commit -m "fix: 修复 bug"
 
 # 3. 更新版本
-pnpm version
+pnpm changeset version
 
 # 4. 提交版本变更
 git add .
@@ -180,7 +180,7 @@ npm deprecate @ouraihub/core@0.1.0 "This version has critical bugs, please upgra
 
 ## CI/CD 集成
 
-未来可以配置 GitHub Actions 自动发布：
+GitHub Actions 自动发布：
 
 ```yaml
 name: Release
@@ -188,30 +188,38 @@ name: Release
 on:
   push:
     branches:
-      - main
+      - master
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+permissions:
+  contents: write
+  pull-requests: write
 
 jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: pnpm/action-setup@v2
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
         with:
-          node-version: 18
-          registry-url: 'https://registry.npmjs.org'
+          version: 10.15.0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
       
-      - run: pnpm install
-      - run: pnpm test
-      - run: pnpm build
+      - run: pnpm install --frozen-lockfile
       
-      - name: Create Release Pull Request or Publish
+      - name: Create version PR or publish
         uses: changesets/action@v1
         with:
           publish: pnpm release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 ```
 
 ## 故障排查

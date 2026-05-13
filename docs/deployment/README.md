@@ -150,7 +150,7 @@ pnpm changeset init
   "fixed": [],
   "linked": [],
   "access": "public",
-  "baseBranch": "main",
+  "baseBranch": "master",
   "updateInternalDependencies": "patch",
   "ignore": []
 }
@@ -172,9 +172,9 @@ pnpm changeset
 git add .
 git commit -m "feat(core): add theme transition API"
 
-# 4. 合并到 main 后，发布版本
+# 4. 合并到 master 后，发布版本
 pnpm changeset version  # 更新版本号和 CHANGELOG
-pnpm changeset publish  # 发布到 npm
+pnpm release  # 发布到 npm
 ```
 
 ---
@@ -186,9 +186,9 @@ pnpm changeset publish  # 发布到 npm
 #### 1. 准备发布
 
 ```bash
-# 确保在 main 分支
-git checkout main
-git pull origin main
+# 确保在 master 分支
+git checkout master
+git pull origin master
 
 # 确保依赖最新
 pnpm install
@@ -262,7 +262,7 @@ name: Release
 on:
   push:
     branches:
-      - main
+      - master
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
@@ -299,7 +299,7 @@ jobs:
         id: changesets
         uses: changesets/action@v1
         with:
-          publish: pnpm changeset publish
+          publish: pnpm release
           title: 'chore: release packages'
           commit: 'chore: release packages'
         env:
@@ -322,7 +322,7 @@ jobs:
 #### 工作流程
 
 1. **开发者提交代码** → 包含 changeset 文件
-2. **合并到 main** → 触发 GitHub Actions
+2. **合并到 master** → 触发 GitHub Actions
 3. **Changesets Action**:
    - 如果有 changeset → 创建 "Version Packages" PR
    - 如果 PR 被合并 → 自动发布到 npm
@@ -517,7 +517,7 @@ npm dist-tag add @ouraihub/core@1.1.0 latest
 ```bash
 # 回滚到上一个稳定版本
 git revert <commit-hash>
-git push origin main
+git push origin master
 
 # 删除错误的 tag
 git tag -d v1.2.0
@@ -543,10 +543,10 @@ pnpm changeset version  # 生成 1.1.1
 pnpm build
 pnpm changeset publish
 
-# 5. 合并回 main
-git checkout main
+# 5. 合并回 master
+git checkout master
 git merge hotfix/critical-bug
-git push origin main
+git push origin master
 ```
 
 ---
