@@ -4,7 +4,7 @@
 
 ## 前置条件
 
-1. **npm 账号**：手动发布时需要 npm 账号并已登录；GitHub Actions 自动发布只需要仓库里的 `NPM_TOKEN`
+1. **npm 账号**：手动发布时需要 npm 账号并已登录；GitHub Actions 自动发布需要仓库 Secret `NPM_TOKEN`
    ```bash
    npm login
    ```
@@ -207,7 +207,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: pnpm
       
       - run: pnpm install --frozen-lockfile
