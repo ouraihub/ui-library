@@ -1,0 +1,91 @@
+{{- $title := .Title | default .Site.Title -}}
+{{- $description := .Description | default .Summary | default .Site.Params.description -}}
+{{- $author := .Params.author | default .Site.Params.author -}}
+{{- $image := .Params.image | default .Site.Params.defaultImage -}}
+{{- $imageAlt := .Params.imageAlt | default $title -}}
+{{- $siteName := .Site.Title -}}
+{{- $locale := .Site.Language.Lang | default "zh-CN" -}}
+{{- $twitterCard := .Params.twitterCard | default "summary_large_image" -}}
+{{- $twitterSite := .Site.Params.twitterSite | default "" -}}
+{{- $twitterCreator := .Params.twitterCreator | default .Site.Params.twitterCreator | default "" -}}
+{{- $keywords := .Params.keywords | default .Site.Params.keywords -}}
+{{- $robots := .Params.robots | default "index, follow" -}}
+
+{{- /* 基本 Meta 标签 */ -}}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="{{ $description | plainify | htmlUnescape }}">
+{{- with $author }}
+<meta name="author" content="{{ . | plainify | htmlUnescape }}">
+{{- end }}
+{{- with $keywords }}
+<meta name="keywords" content="{{ delimit . ", " | plainify | htmlUnescape }}">
+{{- end }}
+<meta name="robots" content="{{ $robots }}">
+
+{{- /* Canonical URL */ -}}
+{{- if .Params.canonical }}
+<link rel="canonical" href="{{ .Params.canonical }}">
+{{- else if not .IsHome }}
+<link rel="canonical" href="{{ .Permalink }}">
+{{- else }}
+<link rel="canonical" href="{{ .Site.BaseURL }}">
+{{- end }}
+
+{{- /* Open Graph 标签 */ -}}
+<meta property="og:type" content="{{ if .IsPage }}article{{ else }}website{{ end }}">
+<meta property="og:title" content="{{ $title | plainify | htmlUnescape }}">
+<meta property="og:description" content="{{ $description | plainify | htmlUnescape }}">
+<meta property="og:url" content="{{ .Permalink }}">
+<meta property="og:site_name" content="{{ $siteName | plainify | htmlUnescape }}">
+<meta property="og:locale" content="{{ $locale }}">
+{{- with $image }}
+{{- if hasPrefix . "http" }}
+<meta property="og:image" content="{{ . }}">
+{{- else }}
+<meta property="og:image" content="{{ . | absURL }}">
+{{- end }}
+<meta property="og:image:alt" content="{{ $imageAlt | plainify | htmlUnescape }}">
+{{- end }}
+{{- if .IsPage }}
+{{- with .PublishDate }}
+<meta property="article:published_time" content="{{ .Format "2006-01-02T15:04:05Z07:00" }}">
+{{- end }}
+{{- with .Lastmod }}
+<meta property="article:modified_time" content="{{ .Format "2006-01-02T15:04:05Z07:00" }}">
+{{- end }}
+{{- with .Params.tags }}
+{{- range . }}
+<meta property="article:tag" content="{{ . | plainify | htmlUnescape }}">
+{{- end }}
+{{- end }}
+{{- end }}
+
+{{- /* Twitter Card 标签 */ -}}
+<meta name="twitter:card" content="{{ $twitterCard }}">
+<meta name="twitter:title" content="{{ $title | plainify | htmlUnescape }}">
+<meta name="twitter:description" content="{{ $description | plainify | htmlUnescape }}">
+{{- with $twitterSite }}
+<meta name="twitter:site" content="{{ . }}">
+{{- end }}
+{{- with $twitterCreator }}
+<meta name="twitter:creator" content="{{ . }}">
+{{- end }}
+{{- with $image }}
+{{- if hasPrefix . "http" }}
+<meta name="twitter:image" content="{{ . }}">
+{{- else }}
+<meta name="twitter:image" content="{{ . | absURL }}">
+{{- end }}
+<meta name="twitter:image:alt" content="{{ $imageAlt | plainify | htmlUnescape }}">
+{{- end }}
+
+{{- /* 额外的 Meta 标签 */ -}}
+{{- if .IsPage }}
+{{- with .PublishDate }}
+<meta name="publish-date" content="{{ .Format "2006-01-02T15:04:05Z07:00" }}">
+{{- end }}
+{{- with .Lastmod }}
+<meta name="last-modified" content="{{ .Format "2006-01-02T15:04:05Z07:00" }}">
+{{- end }}
+{{- end }}

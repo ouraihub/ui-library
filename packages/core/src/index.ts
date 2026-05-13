@@ -10,3 +10,4 @@ export type {
 export * from './lazyload';
 export * from './search';
 export * from './navigation';
+export * from './seo';

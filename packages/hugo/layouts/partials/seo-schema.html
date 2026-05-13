@@ -1,0 +1,117 @@
+{{- $schemaType := .Params.schemaType | default "WebPage" -}}
+{{- $title := .Title | default .Site.Title -}}
+{{- $description := .Description | default .Summary | default .Site.Params.description -}}
+{{- $author := .Params.author | default .Site.Params.author -}}
+{{- $image := .Params.image | default .Site.Params.defaultImage -}}
+{{- $siteName := .Site.Title -}}
+{{- $siteUrl := .Site.BaseURL | strings.TrimSuffix "/" -}}
+{{- $logo := .Site.Params.logo | default "" -}}
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "{{ $schemaType }}",
+  {{- if eq $schemaType "Article" }}
+  "headline": {{ $title | plainify | jsonify }},
+  "description": {{ $description | plainify | jsonify }},
+  "url": {{ .Permalink | jsonify }},
+  {{- with $image }}
+  {{- if hasPrefix . "http" }}
+  "image": {{ . | jsonify }},
+  {{- else }}
+  "image": {{ . | absURL | jsonify }},
+  {{- end }}
+  {{- end }}
+  {{- with .PublishDate }}
+  "datePublished": {{ .Format "2006-01-02T15:04:05Z07:00" | jsonify }},
+  {{- end }}
+  {{- with .Lastmod }}
+  "dateModified": {{ .Format "2006-01-02T15:04:05Z07:00" | jsonify }},
+  {{- end }}
+  {{- with $author }}
+  "author": {
+    "@type": "Person",
+    "name": {{ . | plainify | jsonify }}
+  },
+  {{- end }}
+  "publisher": {
+    "@type": "Organization",
+    "name": {{ $siteName | plainify | jsonify }},
+    "url": {{ $siteUrl | jsonify }}
+    {{- with $logo }}
+    {{- if hasPrefix . "http" }},
+    "logo": {
+      "@type": "ImageObject",
+      "url": {{ . | jsonify }}
+    }
+    {{- else }},
+    "logo": {
+      "@type": "ImageObject",
+      "url": {{ . | absURL | jsonify }}
+    }
+    {{- end }}
+    {{- end }}
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": {{ .Permalink | jsonify }}
+  }
+  {{- with .Params.tags }},
+  "keywords": {{ delimit . ", " | plainify | jsonify }}
+  {{- end }}
+  {{- with .WordCount }},
+  "wordCount": {{ . }}
+  {{- end }}
+  {{- else if eq $schemaType "WebPage" }}
+  "name": {{ $title | plainify | jsonify }},
+  "description": {{ $description | plainify | jsonify }},
+  "url": {{ .Permalink | jsonify }},
+  {{- with $image }}
+  {{- if hasPrefix . "http" }}
+  "image": {{ . | jsonify }},
+  {{- else }}
+  "image": {{ . | absURL | jsonify }},
+  {{- end }}
+  {{- end }}
+  "publisher": {
+    "@type": "Organization",
+    "name": {{ $siteName | plainify | jsonify }},
+    "url": {{ $siteUrl | jsonify }}
+    {{- with $logo }}
+    {{- if hasPrefix . "http" }},
+    "logo": {
+      "@type": "ImageObject",
+      "url": {{ . | jsonify }}
+    }
+    {{- else }},
+    "logo": {
+      "@type": "ImageObject",
+      "url": {{ . | absURL | jsonify }}
+    }
+    {{- end }}
+    {{- end }}
+  }
+  {{- else if eq $schemaType "Organization" }}
+  "name": {{ $siteName | plainify | jsonify }},
+  "url": {{ $siteUrl | jsonify }},
+  {{- with $logo }}
+  {{- if hasPrefix . "http" }}
+  "logo": {{ . | jsonify }},
+  {{- else }}
+  "logo": {{ . | absURL | jsonify }},
+  {{- end }}
+  {{- end }}
+  {{- with .Site.Params.organizationDescription }}
+  "description": {{ . | plainify | jsonify }},
+  {{- end }}
+  {{- with .Site.Params.socialLinks }}
+  "sameAs": [
+    {{- $length := len . -}}
+    {{- range $index, $link := . -}}
+    {{ $link | jsonify }}{{ if lt (add $index 1) $length }},{{ end }}
+    {{- end -}}
+  ]
+  {{- end }}
+  {{- end }}
+}
+</script>

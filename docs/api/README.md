@@ -15,6 +15,7 @@
 - [NavigationController](./NavigationController.md) - 导航菜单控制器
 - [LazyLoader](./LazyLoader.md) - 图片和内容懒加载
 - [SearchModal](./SearchModal.md) - 搜索模态框
+- [SEOManager](./SEOManager.md) - SEO 元数据管理系统
 - [Logger](./Logger.md) - 结构化日志系统
 - [类型定义](./types.md) - TypeScript 类型定义
 
@@ -30,6 +31,7 @@
 | **NavigationController** | 导航菜单控制器，支持移动端菜单、下拉菜单、滚动隐藏 | [查看文档](./NavigationController.md) |
 | **LazyLoader** | 图片和内容懒加载，使用 IntersectionObserver 实现高性能懒加载 | [查看文档](./LazyLoader.md) |
 | **SearchModal** | 搜索模态框，支持键盘快捷键、防抖搜索、焦点管理 | [查看文档](./SearchModal.md) |
+| **SEOManager** | SEO 元数据管理系统，支持 Meta 标签、Open Graph、Twitter Card、Schema.org | [查看文档](./SEOManager.md) |
 | **Logger** | 结构化日志系统，支持多级别、上下文管理、敏感数据脱敏 | [查看文档](./Logger.md) |
 
 ### 类型定义

@@ -331,11 +331,41 @@ function initSearchModals() {
   });
 }
 
+function initSEOManagers() {
+  const seoElements = document.querySelectorAll('[data-ui-component="seo"]');
+  
+  seoElements.forEach((element) => {
+    try {
+      const configAttr = element.getAttribute('data-ui-seo-config');
+      if (!configAttr) return;
+      
+      const config = JSON.parse(configAttr);
+      
+      if (typeof window.SEOManager !== 'undefined') {
+        const seo = new window.SEOManager(config);
+        
+        const metaTags = seo.generateMetaTags();
+        if (metaTags) {
+          document.head.insertAdjacentHTML('beforeend', metaTags);
+        }
+        
+        const schemaScript = seo.generateSchemaOrg();
+        if (schemaScript) {
+          document.head.insertAdjacentHTML('beforeend', schemaScript);
+        }
+      }
+    } catch (e) {
+      console.warn('[SEOManager] Failed to initialize:', e);
+    }
+  });
+}
+
 function initAllComponents() {
   initThemeToggles();
   initNavigationControllers();
   initLazyLoaders();
   initSearchModals();
+  initSEOManagers();
 }
 
 if (document.readyState === 'loading') {

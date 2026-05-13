@@ -143,6 +143,50 @@ search.open();
 search.close();
 ```
 
+### SEOManager - SEO 元数据管理
+
+```typescript
+import { SEOManager } from '@ouraihub/core/seo';
+
+// 创建 SEO 管理器
+const seo = new SEOManager({
+  meta: {
+    title: '我的网站',
+    description: '网站描述',
+    keywords: 'SEO, 网站, 优化'
+  },
+  openGraph: {
+    type: 'website',
+    siteName: '我的网站'
+  },
+  twitter: {
+    card: 'summary_large_image',
+    site: '@mysite'
+  }
+});
+
+// 设置页面信息
+seo.setTitle('博客文章标题');
+seo.setDescription('文章描述');
+seo.setImage('https://example.com/image.jpg', 1200, 630);
+seo.setCanonical('https://example.com/blog/post');
+
+// 设置 Schema.org 数据
+seo.setSchemaOrg({
+  '@type': 'Article',
+  headline: '文章标题',
+  author: {
+    '@type': 'Person',
+    name: '作者名称'
+  },
+  datePublished: '2026-05-13'
+});
+
+// 生成标签
+const metaTags = seo.generateMetaTags();
+const schemaScript = seo.generateSchemaOrg();
+```
+
 ### 自动初始化（推荐）
 
 ```html
@@ -246,7 +290,7 @@ unsubscribe();
 
 ### NavigationController
 
-导航菜单控制器，提供移动端菜单、下拉菜单、滚动隐藏等功能。
+导航菜单控制器，提供移动端菜单切换、多级下拉菜单、滚动隐藏等功能。
 
 #### 构造函数
 
@@ -284,6 +328,187 @@ interface NavigationOptions {
 - `onDropdownToggle(callback)` - 监听下拉菜单切换
 - `onScroll(callback)` - 监听滚动事件
 - `destroy()` - 销毁实例
+
+---
+
+### LazyLoader
+
+图片和内容懒加载控制器，使用 IntersectionObserver 实现。
+
+#### 构造函数
+
+```typescript
+new LazyLoader(options?: LazyLoadOptions)
+```
+
+**选项**:
+```typescript
+interface LazyLoadOptions {
+  root?: Element | null;          // 根元素，默认 null
+  rootMargin?: string;            // 根边距，默认 '0px'
+  threshold?: number;             // 阈值，默认 0
+  placeholderClass?: string;      // 占位符类名
+  loadingClass?: string;          // 加载中类名
+  loadedClass?: string;           // 加载完成类名
+  errorClass?: string;            // 错误类名
+  retryCount?: number;            // 重试次数，默认 2
+  retryDelay?: number;            // 重试延迟，默认 1000
+  fadeInDuration?: number;        // 淡入时长，默认 300
+  onEnter?: (element: HTMLElement) => void;
+  onLoad?: (element: HTMLElement) => void;
+  onError?: (element: HTMLElement, error: Error) => void;
+}
+```
+
+#### 方法
+
+- `observe(element)` - 观察单个元素
+- `observeAll(selector)` - 观察所有匹配元素
+- `unobserve(element)` - 停止观察元素
+- `disconnect()` - 断开所有观察
+- `getState(element)` - 获取元素状态
+
+#### 支持的元素类型
+
+- `<img data-src="...">` - 图片元素
+- `<picture>` - Picture 元素
+- `<div data-bg="...">` - 背景图片
+- `<div data-content="...">` - 自定义内容
+
+---
+
+### SearchModal
+
+搜索模态框，支持键盘快捷键、防抖搜索、焦点管理。
+
+#### 构造函数
+
+```typescript
+new SearchModal(options?: SearchModalOptions)
+```
+
+**选项**:
+```typescript
+interface SearchModalOptions {
+  container?: HTMLElement;        // 容器元素
+  shortcuts?: string[];           // 快捷键，默认 ['ctrl+k', 'cmd+k']
+  debounceDelay?: number;         // 防抖延迟，默认 300
+  minSearchLength?: number;       // 最小搜索长度，默认 2
+  modalClass?: string;            // 模态框类名
+  placeholder?: string;           // 占位符文本
+  onOpen?: () => void;
+  onClose?: () => void;
+  onSearch?: (query: string) => Promise<SearchResult[]> | SearchResult[];
+  onSelect?: (result: SearchResult) => void;
+}
+
+interface SearchResult {
+  id: string;
+  title: string;
+  description?: string;
+  url: string;
+  type?: string;
+  metadata?: Record<string, unknown>;
+}
+```
+
+#### 方法
+
+- `open()` - 打开搜索模态框
+- `close()` - 关闭搜索模态框
+- `toggle()` - 切换模态框状态
+- `getState()` - 获取当前状态
+- `destroy()` - 销毁实例
+
+#### 键盘快捷键
+
+- `Ctrl+K` / `Cmd+K` - 打开/关闭
+- `Esc` - 关闭
+- `↓` / `↑` - 选择结果
+- `Enter` - 确认选择
+
+---
+
+### SEOManager
+
+SEO 元数据管理系统，支持 Meta 标签、Open Graph、Twitter Card、Schema.org。
+
+#### 构造函数
+
+```typescript
+new SEOManager(options?: SEOOptions)
+```
+
+**选项**:
+```typescript
+interface SEOOptions {
+  meta?: MetaTags;                // 基础 meta 标签
+  openGraph?: OpenGraphTags;      // Open Graph 标签
+  twitter?: TwitterCardTags;      // Twitter Card 标签
+  canonical?: string;             // 规范链接
+  schema?: SchemaOrgData | SchemaOrgData[];  // Schema.org 数据
+  hreflang?: Array<{ lang: string; url: string }>;  // 多语言链接
+}
+
+interface MetaTags {
+  title?: string;
+  description?: string;
+  keywords?: string;
+  viewport?: string;
+  robots?: string;
+  author?: string;
+  charset?: string;
+}
+
+interface OpenGraphTags {
+  title?: string;
+  description?: string;
+  image?: string;
+  imageWidth?: number;
+  imageHeight?: number;
+  url?: string;
+  type?: string;
+  siteName?: string;
+  locale?: string;
+}
+
+interface TwitterCardTags {
+  card?: 'summary' | 'summary_large_image' | 'app' | 'player';
+  title?: string;
+  description?: string;
+  image?: string;
+  site?: string;
+  creator?: string;
+}
+```
+
+#### 方法
+
+- `setTitle(title)` - 设置页面标题
+- `setDescription(description)` - 设置页面描述
+- `setImage(url, width?, height?)` - 设置分享图片
+- `setCanonical(url)` - 设置规范链接
+- `setOpenGraph(data)` - 设置 Open Graph 标签
+- `setTwitterCard(data)` - 设置 Twitter Card 标签
+- `setSchemaOrg(data)` - 设置 Schema.org 数据
+- `addSchemaOrg(data)` - 添加 Schema.org 数据
+- `setHreflang(links)` - 设置多语言链接
+- `generateMetaTags()` - 生成 meta 标签 HTML
+- `generateSchemaOrg()` - 生成 Schema.org JSON-LD
+- `getMeta()` - 获取 meta 配置
+- `getOpenGraph()` - 获取 Open Graph 配置
+- `getTwitterCard()` - 获取 Twitter Card 配置
+- `getSchemaOrg()` - 获取 Schema.org 配置
+- `getCanonical()` - 获取规范链接
+- `getHreflang()` - 获取多语言链接
+
+#### 特性
+
+- ✅ **完整 SEO 支持** - Meta、Open Graph、Twitter Card、Schema.org
+- ✅ **自动同步** - 标题、描述、图片自动同步到社交媒体标签
+- ✅ **XSS 防护** - 自动 HTML 转义，防止注入攻击
+- ✅ **多语言支持** - Hreflang 标签支持
+- ✅ **结构化数据** - Schema.org JSON-LD 支持
 
 ---
 
