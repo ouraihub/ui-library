@@ -1,0 +1,131 @@
+/* ============================================================================
+   动画令牌 - 动画和过渡效果定义
+   ============================================================================ */
+
+/* 动画时长变量 */
+:root {
+  --ui-duration-fast: 150ms;
+  --ui-duration-normal: 300ms;
+  --ui-duration-slow: 500ms;
+}
+
+/* 缓动函数变量 */
+:root {
+  --ui-easing-default: cubic-bezier(0.4, 0, 0.2, 1);
+  --ui-easing-in: cubic-bezier(0.4, 0, 1, 1);
+  --ui-easing-out: cubic-bezier(0, 0, 0.2, 1);
+  --ui-easing-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ============================================================================
+   @keyframes 动画定义
+   ============================================================================ */
+
+/* 淡入动画 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* 淡出动画 */
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* 从下滑入 */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 从上滑入 */
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 从左滑入 */
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* 从右滑入 */
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* 缩放进入 */
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* 旋转动画（用于 loading） */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ============================================================================
+   动画工具类
+   ============================================================================ */
+
+/* 淡入动画类 */
+.animate-fade-in {
+  animation: fadeIn var(--ui-duration-normal) var(--ui-easing-default) forwards;
+}
+
+/* 从下滑入动画类 */
+.animate-slide-in-up {
+  animation: slideInUp var(--ui-duration-normal) var(--ui-easing-default) forwards;
+}
+
+/* 旋转加载动画类 */
+.animate-spin {
+  animation: spin var(--ui-duration-slow) linear infinite;
+}

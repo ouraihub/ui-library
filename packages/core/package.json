@@ -1,0 +1,53 @@
+{
+  "name": "@ouraihub/core",
+  "version": "0.1.0",
+  "description": "核心逻辑层 - 纯 TypeScript 类",
+  "type": "module",
+  "main": "./dist/cjs/index.cjs",
+  "module": "./dist/esm/index.mjs",
+  "types": "./dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/esm/index.mjs",
+      "require": "./dist/cjs/index.cjs"
+    },
+    "./preset": {
+      "types": "./dist/types/preset/index.d.ts",
+      "import": "./dist/esm/preset/index.mjs",
+      "require": "./dist/cjs/preset/index.cjs"
+    },
+    "./theme": {
+      "types": "./dist/types/theme/index.d.ts",
+      "import": "./dist/esm/theme/index.mjs",
+      "require": "./dist/cjs/theme/index.cjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "node build.js && tsc --emitDeclarationOnly",
+    "dev": "node build.js --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "vitest": "vitest",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "ui",
+    "components",
+    "typescript",
+    "theme"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "esbuild": "^0.28.0",
+    "@vitest/coverage-v8": "^2.1.9",
+    "jsdom": "^29.1.1",
+    "vitest": "^2.1.9",
+    "typescript": "^5.9.0"
+  }
+}

@@ -1,0 +1,25 @@
+<button 
+  data-ui-component="theme-toggle"
+  data-ui-storage-key="theme"
+  data-ui-attribute="data-theme"
+  class="theme-toggle-btn"
+  aria-label="切换主题"
+>
+  <span class="theme-icon-light">☀️</span>
+  <span class="theme-icon-dark">🌙</span>
+</button>
+
+<style>
+.theme-toggle-btn {
+  border: 1px solid var(--ui-border, #e0e0e0);
+  background: var(--ui-background, #ffffff);
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+}
+
+[data-theme="light"] .theme-icon-dark,
+[data-theme="dark"] .theme-icon-light {
+  display: none;
+}
+</style>

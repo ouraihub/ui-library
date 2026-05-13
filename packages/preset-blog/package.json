@@ -1,0 +1,54 @@
+{
+  "name": "@ouraihub/preset-blog",
+  "version": "0.1.0",
+  "description": "博客场景的预设配置，提供优化的阅读体验和常用组件配置",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./tokens": {
+      "types": "./dist/tokens.d.ts",
+      "import": "./dist/tokens.js"
+    },
+    "./components": {
+      "types": "./dist/components.d.ts",
+      "import": "./dist/components.js"
+    },
+    "./layouts": {
+      "types": "./dist/layouts.d.ts",
+      "import": "./dist/layouts.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "blog",
+    "preset",
+    "design-system",
+    "ui-library",
+    "ouraihub"
+  ],
+  "author": "@ouraihub",
+  "license": "MIT",
+  "dependencies": {
+    "@ouraihub/core": "workspace:*",
+    "@ouraihub/tokens": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

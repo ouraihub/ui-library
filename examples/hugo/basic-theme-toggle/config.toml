@@ -1,0 +1,38 @@
+# Hugo 配置示例
+# 用于基础主题切换示例
+
+baseURL = "https://example.com/"
+languageCode = "zh-cn"
+title = "主题切换示例"
+theme = "your-theme-name"
+
+# 构建配置
+[build]
+  writeStats = true
+
+# 资源处理
+[build.buildStats]
+  enable = true
+
+# TypeScript 构建配置
+[build.buildStats.js]
+  target = "es2020"
+  format = "esm"
+
+# 开发服务器配置
+[server]
+  [[server.headers]]
+    for = "/**"
+    [server.headers.values]
+      # 允许 ES 模块
+      Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'"
+
+# 参数配置（可选）
+[params]
+  # 默认主题设置
+  defaultTheme = "system"  # 可选: "light", "dark", "system"
+  
+  # 主题切换配置
+  [params.theme]
+    storageKey = "theme"
+    attribute = "data-theme"

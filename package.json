@@ -1,0 +1,47 @@
+{
+  "name": "@ouraihub/ui-library",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "可复用组件库 - 为 Hugo 主题和 Astro 项目设计",
+  "keywords": [
+    "ui-library",
+    "hugo",
+    "astro",
+    "typescript",
+    "tailwindcss"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ouraihub/ui-library.git"
+  },
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "test": "turbo run test",
+    "typecheck": "turbo run typecheck",
+    "lint": "turbo run lint",
+    "clean": "turbo run clean",
+    "check:circular": "node scripts/check-circular-deps.js",
+    "check:circular:graph": "node scripts/check-circular-deps.js --graph",
+    "check:circular:stats": "node scripts/check-circular-deps.js --stats",
+    "prepare": "husky install"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@vitest/coverage-v8": "^2.1.9",
+    "chalk": "^5.3.0",
+    "esbuild": "^0.28.0",
+    "husky": "^8.0.3",
+    "jsdom": "^29.1.1",
+    "madge": "^6.1.0",
+    "turbo": "^2.0.0",
+    "typescript": "^5.9.0",
+    "vitest": "^2.0.0"
+  },
+  "packageManager": "pnpm@10.15.0",
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  }
+}

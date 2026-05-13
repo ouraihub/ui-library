@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="{{ .Site.Language.Lang }}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>多实例主题切换示例</title>
+  
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('theme');
+      let theme = 'light';
+      
+      if (savedTheme === 'dark') {
+        theme = 'dark';
+      } else if (savedTheme === 'light') {
+        theme = 'light';
+      } else {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        theme = prefersDark ? 'dark' : 'light';
+      }
+      
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      line-height: 1.6;
+      background: var(--background);
+      color: var(--text);
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    [data-theme="light"] {
+      --background: #ffffff;
+      --text: #1a1a1a;
+      --ui-border: #e0e0e0;
+      --ui-background: #ffffff;
+      --ui-background-hover: #f5f5f5;
+    }
+
+    [data-theme="dark"] {
+      --background: #1a1a1a;
+      --text: #ffffff;
+      --ui-border: #404040;
+      --ui-background: #2a2a2a;
+      --ui-background-hover: #3a3a3a;
+    }
+
+    header, aside, footer {
+      padding: 1rem;
+      border-bottom: 1px solid var(--ui-border);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+    }
+
+    .theme-toggle-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 2.5rem;
+      height: 2.5rem;
+      padding: 0.5rem;
+      border: 1px solid var(--ui-border);
+      background: var(--ui-background);
+      border-radius: 0.375rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .theme-toggle-btn:hover {
+      background: var(--ui-background-hover);
+    }
+
+    .theme-toggle-active {
+      transform: rotate(180deg);
+    }
+
+    [data-theme="light"] .theme-icon-dark,
+    [data-theme="dark"] .theme-icon-light {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>多实例主题切换示例</h1>
+      <button data-ui-component="theme-toggle" class="theme-toggle-btn">
+        <span class="theme-icon-light">☀️</span>
+        <span class="theme-icon-dark">🌙</span>
+      </button>
+    </div>
+  </header>
+
+  <aside>
+    <div class="container">
+      <p>侧边栏按钮</p>
+      <button data-ui-component="theme-toggle" class="theme-toggle-btn">
+        <span class="theme-icon-light">☀️</span>
+        <span class="theme-icon-dark">🌙</span>
+      </button>
+    </div>
+  </aside>
+
+  <main>
+    <div class="container">
+      <h2>主内容区</h2>
+      <p>点击任何一个主题切换按钮，所有按钮的状态都会同步更新。</p>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>页脚按钮</p>
+      <button data-ui-component="theme-toggle" class="theme-toggle-btn">
+        <span class="theme-icon-light">☀️</span>
+        <span class="theme-icon-dark">🌙</span>
+      </button>
+    </div>
+  </footer>
+
+  {{ $theme := resources.Get "ts/theme-multi.ts" | js.Build }}
+  <script src="{{ $theme.RelPermalink }}" type="module"></script>
+</body>
+</html>

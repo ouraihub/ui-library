@@ -1,0 +1,25 @@
+{
+  "name": "@ouraihub/tokens",
+  "version": "0.1.0",
+  "description": "Design tokens and Tailwind CSS preset for @ouraihub/ui-library",
+  "type": "module",
+  "main": "./src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./preset": "./src/preset.js",
+    "./css": "./src/tokens.css"
+  },
+  "files": [
+    "src"
+  ],
+  "peerDependencies": {
+    "tailwindcss": "^4.0.0"
+  },
+  "keywords": [
+    "design-tokens",
+    "tailwind",
+    "css-variables",
+    "theme"
+  ],
+  "license": "MIT"
+}

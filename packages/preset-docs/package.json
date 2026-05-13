@@ -1,0 +1,61 @@
+{
+  "name": "@ouraihub/preset-docs",
+  "version": "0.1.0",
+  "description": "Documentation site preset with optimized readability and navigation",
+  "type": "module",
+  "main": "./dist/cjs/index.cjs",
+  "module": "./dist/esm/index.mjs",
+  "types": "./dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/esm/index.mjs",
+      "require": "./dist/cjs/index.cjs"
+    },
+    "./tokens": {
+      "types": "./dist/types/tokens.d.ts",
+      "import": "./dist/esm/tokens.mjs",
+      "require": "./dist/cjs/tokens.cjs"
+    },
+    "./components": {
+      "types": "./dist/types/components.d.ts",
+      "import": "./dist/esm/components.mjs",
+      "require": "./dist/cjs/components.cjs"
+    },
+    "./layouts": {
+      "types": "./dist/types/layouts.d.ts",
+      "import": "./dist/esm/layouts.mjs",
+      "require": "./dist/cjs/layouts.cjs"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "node build.js && tsc --emitDeclarationOnly",
+    "dev": "node build.js --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@ouraihub/core": "workspace:*",
+    "@ouraihub/tokens": "workspace:*"
+  },
+  "keywords": [
+    "preset",
+    "documentation",
+    "docs",
+    "technical-writing",
+    "api-reference",
+    "design-system"
+  ],
+  "author": "@ouraihub",
+  "license": "MIT",
+  "devDependencies": {
+    "esbuild": "^0.28.0",
+    "typescript": "^5.9.0"
+  }
+}

@@ -1,0 +1,19 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "🔍 Checking for circular dependencies..."
+
+pnpm check:circular
+
+if [ $? -ne 0 ]; then
+  echo ""
+  echo "❌ Commit blocked: Fix circular dependencies first"
+  echo ""
+  echo "Run 'pnpm check:circular' to see the circular dependencies"
+  echo "Run 'pnpm check:circular --graph' to generate a visual graph"
+  echo ""
+  exit 1
+fi
+
+echo "✅ No circular dependencies detected"
+echo ""

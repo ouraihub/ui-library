@@ -1,0 +1,66 @@
+:root {
+  --theme-toggle-size: 2.5rem;
+  --theme-toggle-bg: #ffffff;
+  --theme-toggle-border: #e0e0e0;
+  --theme-toggle-hover-bg: #f5f5f5;
+  --theme-toggle-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] {
+  --theme-toggle-bg: #2a2a2a;
+  --theme-toggle-border: #404040;
+  --theme-toggle-hover-bg: #3a3a3a;
+  --theme-toggle-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.theme-toggle-custom {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--theme-toggle-size);
+  height: var(--theme-toggle-size);
+  padding: 0.5rem;
+  border: 2px solid var(--theme-toggle-border);
+  background: var(--theme-toggle-bg);
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: var(--theme-toggle-shadow);
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.theme-toggle-custom:hover {
+  background: var(--theme-toggle-hover-bg);
+  transform: scale(1.1);
+}
+
+.theme-toggle-custom:active {
+  transform: rotate(180deg) scale(0.9);
+}
+
+.theme-toggle-custom:focus-visible {
+  outline: 2px solid var(--ui-focus, #3b82f6);
+  outline-offset: 2px;
+}
+
+.theme-icon-light,
+.theme-icon-dark {
+  font-size: 1.25rem;
+  line-height: 1;
+  transition: opacity 0.2s ease;
+}
+
+[data-theme="light"] .theme-icon-dark,
+[data-theme="dark"] .theme-icon-light {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  :root {
+    --theme-toggle-size: 2rem;
+  }
+  
+  .theme-icon-light,
+  .theme-icon-dark {
+    font-size: 1rem;
+  }
+}

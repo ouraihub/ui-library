@@ -1,0 +1,28 @@
+{
+  "name": "@ouraihub/hugo",
+  "version": "0.1.0",
+  "description": "Hugo theme components for @ouraihub/ui-library",
+  "type": "module",
+  "scripts": {
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:debug": "playwright test --debug"
+  },
+  "peerDependencies": {
+    "@ouraihub/core": "workspace:*"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.48.0"
+  },
+  "files": [
+    "layouts",
+    "static"
+  ],
+  "keywords": [
+    "hugo",
+    "theme",
+    "components",
+    "ui"
+  ]
+}

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="{{ .Site.Language.Lang }}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ block "title" . }}{{ .Site.Title }}{{ end }}</title>
+  
+  {{/*
+    防闪烁脚本
+    
+    必须在任何样式之前执行，防止页面加载时出现主题闪烁。
+    
+    工作原理:
+    1. 从 localStorage 读取保存的主题
+    2. 如果是 'system'，检查系统主题偏好
+    3. 立即设置 data-theme 属性
+  */}}
+  <script>
+    (function() {
+      // 从 localStorage 读取主题设置
+      const savedTheme = localStorage.getItem('theme');
+      
+      // 确定实际主题
+      let theme = 'light'; // 默认亮色
+      
+      if (savedTheme === 'dark') {
+        theme = 'dark';
+      } else if (savedTheme === 'light') {
+        theme = 'light';
+      } else {
+        // 'system' 或未设置，检查系统偏好
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        theme = prefersDark ? 'dark' : 'light';
+      }
+      
+      // 立即应用主题
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
+  
+  {{/* 你的样式文件 */}}
+  {{ $style := resources.Get "css/main.css" }}
+  {{ if $style }}
+    <link rel="stylesheet" href="{{ $style.RelPermalink }}">
+  {{ end }}
+  
+  {{ block "head" . }}{{ end }}
+</head>
+<body>
+  {{/* 导航栏 */}}
+  <header>
+    <nav>
+      <div class="nav-container">
+        {{/* 网站标题 */}}
+        <a href="{{ .Site.BaseURL }}" class="site-title">
+          {{ .Site.Title }}
+        </a>
+        
+        {{/* 主题切换按钮 */}}
+        {{ partial "theme-toggle.html" . }}
+      </div>
+    </nav>
+  </header>
+  
+  {{/* 主内容区 */}}
+  <main>
+    {{ block "main" . }}{{ end }}
+  </main>
+  
+  {{/* 页脚 */}}
+  <footer>
+    <p>&copy; {{ now.Year }} {{ .Site.Title }}</p>
+  </footer>
+  
+  {{/* 加载主题管理脚本 */}}
+  {{ $theme := resources.Get "ts/theme.ts" | js.Build }}
+  <script src="{{ $theme.RelPermalink }}" type="module"></script>
+  
+  {{ block "scripts" . }}{{ end }}
+</body>
+</html>
+
+<style>
+/* 基础布局样式 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+  line-height: 1.6;
+  background: var(--background);
+  color: var(--text);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* CSS 变量 - Light 主题 */
+[data-theme="light"] {
+  --background: #ffffff;
+  --text: #1a1a1a;
+  --ui-border: #e0e0e0;
+  --ui-background: #ffffff;
+  --ui-background-hover: #f5f5f5;
+  --ui-border-hover: #d0d0d0;
+  --ui-focus: #3b82f6;
+}
+
+/* CSS 变量 - Dark 主题 */
+[data-theme="dark"] {
+  --background: #1a1a1a;
+  --text: #ffffff;
+  --ui-border: #404040;
+  --ui-background: #2a2a2a;
+  --ui-background-hover: #3a3a3a;
+  --ui-border-hover: #505050;
+  --ui-focus: #60a5fa;
+}
+
+/* 导航栏 */
+header {
+  border-bottom: 1px solid var(--ui-border);
+  padding: 1rem 0;
+}
+
+.nav-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.site-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--text);
+  text-decoration: none;
+}
+
+/* 主内容 */
+main {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+  min-height: calc(100vh - 200px);
+}
+
+/* 页脚 */
+footer {
+  border-top: 1px solid var(--ui-border);
+  padding: 2rem 0;
+  text-align: center;
+  color: var(--text);
+  opacity: 0.7;
+}
+</style>
