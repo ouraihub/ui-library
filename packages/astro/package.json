@@ -1,0 +1,52 @@
+{
+  "name": "@ouraihub/astro",
+  "version": "0.1.0",
+  "description": "Astro components for @ouraihub/ui-library",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./SEO.astro": {
+      "types": "./src/components/SEO.astro.d.ts",
+      "default": "./src/components/SEO.astro"
+    }
+  },
+  "files": [
+    "dist",
+    "src/components"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "astro",
+    "components",
+    "ui",
+    "seo"
+  ],
+  "author": "OurAI Hub",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ouraihub/ui-library.git",
+    "directory": "packages/astro"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "peerDependencies": {
+    "astro": "^4.0.0"
+  },
+  "dependencies": {
+    "@ouraihub/core": "workspace:*"
+  },
+  "devDependencies": {
+    "astro": "^4.0.0",
+    "typescript": "^5.3.3"
+  }
+}

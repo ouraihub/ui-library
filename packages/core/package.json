@@ -41,8 +41,16 @@
     "typescript",
     "theme"
   ],
-  "author": "",
+  "author": "OurAI Hub",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ouraihub/ui-library.git",
+    "directory": "packages/core"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "devDependencies": {
     "esbuild": "^0.28.0",
     "@vitest/coverage-v8": "^2.1.9",

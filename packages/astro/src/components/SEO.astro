@@ -1,0 +1,27 @@
+---
+import type { SEOOptions } from '@ouraihub/core/seo';
+
+export interface Props extends SEOOptions {
+  class?: string;
+}
+
+const { class: className, ...seoOptions } = Astro.props;
+---
+
+<script define:vars={{ seoOptions }}>
+  if (typeof window !== 'undefined') {
+    import('@ouraihub/core/seo').then(({ SEOManager }) => {
+      const seo = new SEOManager(seoOptions);
+      
+      const metaTags = seo.generateMetaTags();
+      if (metaTags) {
+        document.head.insertAdjacentHTML('beforeend', metaTags);
+      }
+      
+      const schemaScript = seo.generateSchemaOrg();
+      if (schemaScript) {
+        document.head.insertAdjacentHTML('beforeend', schemaScript);
+      }
+    });
+  }
+</script>

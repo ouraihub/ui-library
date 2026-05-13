@@ -21,5 +21,14 @@
     "css-variables",
     "theme"
   ],
-  "license": "MIT"
+  "author": "OurAI Hub",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ouraihub/ui-library.git",
+    "directory": "packages/tokens"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
 }
