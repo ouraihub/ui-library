@@ -1,0 +1,35 @@
+{{- $src := .src | default "" -}}
+{{- $alt := .alt | default "" -}}
+{{- $placeholder := .placeholder | default "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'%3E%3Crect fill='%23f0f0f0' width='400' height='300'/%3E%3C/svg%3E" -}}
+{{- $class := .class | default "" -}}
+{{- $width := .width | default "" -}}
+{{- $height := .height | default "" -}}
+{{- $loading := .loading | default "lazy" -}}
+
+<img 
+  data-ui-component="lazy-image"
+  data-src="{{ $src }}"
+  src="{{ $placeholder }}"
+  alt="{{ $alt }}"
+  class="lazy-image {{ $class }}"
+  {{- if $width }} width="{{ $width }}"{{ end -}}
+  {{- if $height }} height="{{ $height }}"{{ end -}}
+  loading="{{ $loading }}"
+  decoding="async"
+/>
+
+<style>
+.lazy-image {
+  opacity: 0;
+  transition: opacity 0.3s ease-in;
+}
+
+.lazy-image.loaded {
+  opacity: 1;
+}
+
+.lazy-image.error {
+  opacity: 0.5;
+  border: 2px dashed var(--ui-error, #dc2626);
+}
+</style>

@@ -12,6 +12,9 @@
 ## 目录
 
 - [ThemeManager](./ThemeManager.md) - 主题管理系统
+- [NavigationController](./NavigationController.md) - 导航菜单控制器
+- [LazyLoader](./LazyLoader.md) - 图片和内容懒加载
+- [SearchModal](./SearchModal.md) - 搜索模态框
 - [Logger](./Logger.md) - 结构化日志系统
 - [类型定义](./types.md) - TypeScript 类型定义
 
@@ -24,6 +27,9 @@
 | API | 描述 | 文档链接 |
 |-----|------|----------|
 | **ThemeManager** | 主题切换和管理系统，支持 light/dark/system 模式 | [查看文档](./ThemeManager.md) |
+| **NavigationController** | 导航菜单控制器，支持移动端菜单、下拉菜单、滚动隐藏 | [查看文档](./NavigationController.md) |
+| **LazyLoader** | 图片和内容懒加载，使用 IntersectionObserver 实现高性能懒加载 | [查看文档](./LazyLoader.md) |
+| **SearchModal** | 搜索模态框，支持键盘快捷键、防抖搜索、焦点管理 | [查看文档](./SearchModal.md) |
 | **Logger** | 结构化日志系统，支持多级别、上下文管理、敏感数据脱敏 | [查看文档](./Logger.md) |
 
 ### 类型定义
@@ -32,6 +38,10 @@
 |------|------|----------|
 | **ThemeMode** | 主题模式类型 (`'light' \| 'dark' \| 'system'`) | [查看文档](./types.md#thememode) |
 | **ThemeOptions** | ThemeManager 配置选项 | [查看文档](./types.md#themeoptions) |
+| **NavigationOptions** | NavigationController 配置选项 | [查看文档](./types.md#navigationoptions) |
+| **LazyLoadOptions** | LazyLoader 配置选项 | [查看文档](./types.md#lazyloadoptions) |
+| **SearchModalOptions** | SearchModal 配置选项 | [查看文档](./types.md#searchmodaloptions) |
+| **SearchResult** | 搜索结果接口 | [查看文档](./types.md#searchresult) |
 | **LogLevel** | 日志级别类型 | [查看文档](./types.md#loglevel) |
 | **Logger** | 日志器接口 | [查看文档](./types.md#logger) |
 | **Preset** | 预设系统接口 | [查看文档](./types.md#preset) |
@@ -59,6 +69,74 @@ theme.toggle(); // 切换主题
 
 ---
 
+### NavigationController
+
+导航菜单控制器，提供移动端菜单切换、多级下拉菜单、滚动隐藏等功能。
+
+**导入**:
+```typescript
+import { NavigationController } from '@ouraihub/core/navigation';
+```
+
+**快速开始**:
+```typescript
+const nav = new NavigationController(document.querySelector('nav'), {
+  mobileBreakpoint: 768,
+  hideOnScroll: true
+});
+```
+
+**详细文档**: [NavigationController API](./NavigationController.md)
+
+---
+
+### LazyLoader
+
+图片和内容懒加载控制器，使用 IntersectionObserver 实现高性能懒加载。
+
+**导入**:
+```typescript
+import { LazyLoader } from '@ouraihub/core/lazyload';
+```
+
+**快速开始**:
+```typescript
+const loader = new LazyLoader({
+  rootMargin: '50px',
+  threshold: 0.1
+});
+loader.observeAll('img[data-src]');
+```
+
+**详细文档**: [LazyLoader API](./LazyLoader.md)
+
+---
+
+### SearchModal
+
+搜索模态框，支持键盘快捷键、防抖搜索、焦点管理等功能。
+
+**导入**:
+```typescript
+import { SearchModal } from '@ouraihub/core/search';
+```
+
+**快速开始**:
+```typescript
+const search = new SearchModal({
+  onSearch: async (query) => {
+    return await fetchResults(query);
+  },
+  onSelect: (result) => {
+    window.location.href = result.url;
+  }
+});
+```
+
+**详细文档**: [SearchModal API](./SearchModal.md)
+
+---
+
 ### Logger
 
 结构化日志系统，支持多级别日志、上下文管理、敏感数据脱敏。
@@ -82,8 +160,16 @@ logger.error('请求失败', { status: 500 });
 
 以下 API 已完成实现并可用：
 
+### P0 组件（核心功能）
 - ✅ **ThemeManager** - 主题管理系统
 - ✅ **Logger** - 结构化日志系统
+
+### P1 组件（强烈建议）
+- ✅ **NavigationController** - 导航菜单控制器
+- ✅ **LazyLoader** - 图片和内容懒加载
+- ✅ **SearchModal** - 搜索模态框
+
+### 类型系统
 - ✅ **类型定义** - 完整的 TypeScript 类型
 
 ## 计划中的 API
@@ -93,9 +179,6 @@ logger.error('请求失败', { status: 500 });
 - ⏳ **DOM 工具函数** - querySelector、addClass、removeClass 等
 - ⏳ **验证工具** - isValidEmail、isValidUrl、sanitizeHtml 等
 - ⏳ **格式化工具** - formatDate、formatNumber、formatFileSize 等
-- ⏳ **SearchModal** - 搜索模态框控制器
-- ⏳ **NavigationController** - 导航菜单控制器
-- ⏳ **LazyLoader** - 图片懒加载控制器
 
 ---
 

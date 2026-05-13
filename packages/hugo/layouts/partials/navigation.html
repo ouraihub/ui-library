@@ -1,0 +1,269 @@
+{{- $menuItems := .menuItems | default (slice) -}}
+{{- $logo := .logo | default "" -}}
+{{- $logoAlt := .logoAlt | default "Logo" -}}
+
+<nav 
+  data-ui-component="navigation"
+  data-ui-mobile-breakpoint="768"
+  class="navigation-container"
+  role="navigation"
+  aria-label="主导航"
+>
+  <div class="navigation-inner">
+    {{- if $logo -}}
+    <div class="navigation-logo">
+      <a href="/" aria-label="返回首页">
+        <img src="{{ $logo }}" alt="{{ $logoAlt }}" />
+      </a>
+    </div>
+    {{- end -}}
+
+    <button 
+      class="navigation-mobile-toggle"
+      aria-label="切换菜单"
+      aria-expanded="false"
+      aria-controls="navigation-menu"
+    >
+      <span class="hamburger-icon">
+        <span></span>
+        <span></span>
+        <span></span>
+      </span>
+    </button>
+
+    <div 
+      id="navigation-menu"
+      class="navigation-menu"
+      role="menu"
+    >
+      <ul class="navigation-list">
+        {{- range $menuItems -}}
+        <li class="navigation-item{{ if .children }} has-dropdown{{ end }}" role="none">
+          {{- if .children -}}
+          <button 
+            class="navigation-link navigation-dropdown-toggle"
+            aria-haspopup="true"
+            aria-expanded="false"
+            role="menuitem"
+          >
+            {{ .title }}
+            <span class="dropdown-arrow" aria-hidden="true">▼</span>
+          </button>
+          <ul class="navigation-dropdown" role="menu">
+            {{- range .children -}}
+            <li class="navigation-dropdown-item" role="none">
+              <a 
+                href="{{ .url }}" 
+                class="navigation-dropdown-link"
+                role="menuitem"
+              >
+                {{ .title }}
+              </a>
+            </li>
+            {{- end -}}
+          </ul>
+          {{- else -}}
+          <a 
+            href="{{ .url }}" 
+            class="navigation-link"
+            role="menuitem"
+          >
+            {{ .title }}
+          </a>
+          {{- end -}}
+        </li>
+        {{- end -}}
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<style>
+.navigation-container {
+  border-bottom: 1px solid var(--ui-border, #e0e0e0);
+  background: var(--ui-background, #ffffff);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.navigation-inner {
+  max-width: var(--ui-max-width, 1200px);
+  margin: 0 auto;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.navigation-logo img {
+  height: 2rem;
+  width: auto;
+}
+
+.navigation-mobile-toggle {
+  display: none;
+  border: none;
+  background: transparent;
+  padding: 0.5rem;
+  cursor: pointer;
+}
+
+.hamburger-icon {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.hamburger-icon span {
+  display: block;
+  width: 1.5rem;
+  height: 2px;
+  background: var(--ui-text, #333333);
+  transition: transform 0.2s ease;
+}
+
+.navigation-menu {
+  display: flex;
+}
+
+.navigation-list {
+  display: flex;
+  gap: 1.5rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.navigation-item {
+  position: relative;
+}
+
+.navigation-link {
+  color: var(--ui-text, #333333);
+  text-decoration: none;
+  padding: 0.5rem 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: color 0.2s ease;
+}
+
+.navigation-link:hover {
+  color: var(--ui-primary, #0066cc);
+}
+
+.navigation-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  min-width: 12rem;
+  background: var(--ui-background, #ffffff);
+  border: 1px solid var(--ui-border, #e0e0e0);
+  border-radius: 0.25rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  list-style: none;
+  margin: 0.25rem 0 0 0;
+  padding: 0.5rem 0;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-0.5rem);
+  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+}
+
+.navigation-item.has-dropdown:hover .navigation-dropdown,
+.navigation-dropdown-toggle[aria-expanded="true"] + .navigation-dropdown {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.navigation-dropdown-item {
+  margin: 0;
+}
+
+.navigation-dropdown-link {
+  color: var(--ui-text, #333333);
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  display: block;
+  transition: background-color 0.2s ease;
+}
+
+.navigation-dropdown-link:hover {
+  background: var(--ui-background-hover, #f5f5f5);
+}
+
+.dropdown-arrow {
+  font-size: 0.75rem;
+  transition: transform 0.2s ease;
+}
+
+.navigation-dropdown-toggle[aria-expanded="true"] .dropdown-arrow {
+  transform: rotate(180deg);
+}
+
+@media (max-width: 768px) {
+  .navigation-mobile-toggle {
+    display: block;
+  }
+
+  .navigation-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--ui-background, #ffffff);
+    border-top: 1px solid var(--ui-border, #e0e0e0);
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+
+  .navigation-menu[aria-hidden="false"] {
+    max-height: 100vh;
+  }
+
+  .navigation-list {
+    flex-direction: column;
+    gap: 0;
+    padding: 1rem;
+  }
+
+  .navigation-item {
+    border-bottom: 1px solid var(--ui-border, #e0e0e0);
+  }
+
+  .navigation-item:last-child {
+    border-bottom: none;
+  }
+
+  .navigation-link {
+    padding: 0.75rem 0;
+  }
+
+  .navigation-dropdown {
+    position: static;
+    border: none;
+    box-shadow: none;
+    padding-left: 1rem;
+    margin-top: 0;
+  }
+
+  .navigation-mobile-toggle[aria-expanded="true"] .hamburger-icon span:nth-child(1) {
+    transform: rotate(45deg) translate(0.4rem, 0.4rem);
+  }
+
+  .navigation-mobile-toggle[aria-expanded="true"] .hamburger-icon span:nth-child(2) {
+    opacity: 0;
+  }
+
+  .navigation-mobile-toggle[aria-expanded="true"] .hamburger-icon span:nth-child(3) {
+    transform: rotate(-45deg) translate(0.4rem, -0.4rem);
+  }
+}
+</style>

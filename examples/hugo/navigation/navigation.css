@@ -1,0 +1,240 @@
+/* 导航栏基础样式 */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  transition: transform 0.3s ease;
+}
+
+.navbar--hidden {
+  transform: translateY(-100%);
+}
+
+.navbar__container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.navbar__logo {
+  padding: 1rem 1.5rem;
+  font-weight: bold;
+  font-size: 1.25rem;
+  text-decoration: none;
+  color: #333;
+}
+
+.navbar__toggle {
+  display: none;
+  padding: 1rem 1.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.5rem;
+  color: #333;
+}
+
+.navbar__toggle-icon {
+  display: block;
+}
+
+.navbar__menu {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.navbar__menu > li {
+  position: relative;
+}
+
+.navbar__menu > li > a,
+.navbar__dropdown-trigger {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 1rem 1.5rem;
+  text-decoration: none;
+  color: #333;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  font-family: inherit;
+  transition: background 0.2s;
+}
+
+.navbar__menu > li > a:hover,
+.navbar__dropdown-trigger:hover {
+  background: #f5f5f5;
+}
+
+.navbar__dropdown-icon {
+  font-size: 0.75rem;
+  transition: transform 0.2s;
+}
+
+.navbar__item--active .navbar__dropdown-icon {
+  transform: rotate(180deg);
+}
+
+.navbar__dropdown {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  list-style: none;
+  margin: 0;
+  padding: 0.5rem 0;
+  min-width: 200px;
+  border-radius: 4px;
+}
+
+.navbar__item--active .navbar__dropdown {
+  display: block;
+}
+
+.navbar__dropdown li a {
+  display: block;
+  padding: 0.75rem 1.5rem;
+  text-decoration: none;
+  color: #333;
+  white-space: nowrap;
+  transition: background 0.2s;
+}
+
+.navbar__dropdown li a:hover {
+  background: #f5f5f5;
+}
+
+@media (max-width: 768px) {
+  .navbar__toggle {
+    display: block;
+  }
+  
+  .navbar__menu {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-height: calc(100vh - 100%);
+    overflow-y: auto;
+  }
+  
+  .navbar--mobile-open .navbar__menu {
+    display: flex;
+  }
+  
+  .navbar__menu > li {
+    border-bottom: 1px solid #f0f0f0;
+  }
+  
+  .navbar__dropdown {
+    position: static;
+    box-shadow: none;
+    background: #f5f5f5;
+    border-radius: 0;
+  }
+  
+  .navbar__dropdown li {
+    border-bottom: 1px solid #e0e0e0;
+  }
+  
+  .navbar__dropdown li:last-child {
+    border-bottom: none;
+  }
+}
+
+body.scroll-lock {
+  overflow: hidden;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  line-height: 1.6;
+  color: #333;
+}
+
+.main {
+  margin-top: 60px;
+}
+
+.hero {
+  padding: 4rem 2rem;
+  text-align: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.hero h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.hero p {
+  font-size: 1.25rem;
+  opacity: 0.9;
+}
+
+.content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 3rem 2rem;
+}
+
+.content h2 {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  color: #333;
+}
+
+.demo-card {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.demo-card h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #667eea;
+}
+
+.demo-card p {
+  color: #666;
+  line-height: 1.8;
+}
+
+.placeholder {
+  height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f5f5f5;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  font-size: 1.25rem;
+  color: #999;
+}

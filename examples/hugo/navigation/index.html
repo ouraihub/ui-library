@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>导航菜单示例 - @ouraihub/ui-library</title>
+  <link rel="stylesheet" href="navigation.css">
+</head>
+<body>
+  <!-- 导航栏 -->
+  <nav class="navbar">
+    <div class="navbar__container">
+      <!-- Logo -->
+      <a href="/" class="navbar__logo">
+        <span>UI Library</span>
+      </a>
+      
+      <!-- 汉堡菜单按钮 -->
+      <button class="navbar__toggle" 
+              data-menu-toggle 
+              aria-label="切换菜单"
+              aria-expanded="false">
+        <span class="navbar__toggle-icon" data-menu-icon>☰</span>
+      </button>
+      
+      <!-- 导航菜单 -->
+      <ul class="navbar__menu">
+        <li><a href="#home">首页</a></li>
+        
+        <!-- 产品下拉菜单 -->
+        <li class="navbar__item--dropdown" data-dropdown="products">
+          <button class="navbar__dropdown-trigger" 
+                  data-dropdown-trigger="products"
+                  aria-expanded="false">
+            产品
+            <span class="navbar__dropdown-icon">▼</span>
+          </button>
+          <ul class="navbar__dropdown">
+            <li><a href="#product-a">产品 A</a></li>
+            <li><a href="#product-b">产品 B</a></li>
+            <li><a href="#product-c">产品 C</a></li>
+          </ul>
+        </li>
+        
+        <!-- 文档下拉菜单 -->
+        <li class="navbar__item--dropdown" data-dropdown="docs">
+          <button class="navbar__dropdown-trigger" 
+                  data-dropdown-trigger="docs"
+                  aria-expanded="false">
+            文档
+            <span class="navbar__dropdown-icon">▼</span>
+          </button>
+          <ul class="navbar__dropdown">
+            <li><a href="#quick-start">快速开始</a></li>
+            <li><a href="#api-reference">API 参考</a></li>
+            <li><a href="#examples">示例</a></li>
+          </ul>
+        </li>
+        
+        <li><a href="#about">关于</a></li>
+        <li><a href="#contact">联系</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- 主要内容 -->
+  <main class="main">
+    <section class="hero">
+      <h1>导航菜单示例</h1>
+      <p>完整的响应式导航菜单，支持移动端菜单、下拉菜单、滚动隐藏</p>
+    </section>
+
+    <section class="content">
+      <h2>功能演示</h2>
+      
+      <div class="demo-card">
+        <h3>1. 移动端菜单</h3>
+        <p>调整浏览器窗口宽度到 768px 以下，点击汉堡菜单按钮查看移动端菜单。</p>
+      </div>
+
+      <div class="demo-card">
+        <h3>2. 下拉菜单</h3>
+        <p>点击"产品"或"文档"查看下拉菜单，点击外部区域关闭。</p>
+      </div>
+
+      <div class="demo-card">
+        <h3>3. 滚动隐藏</h3>
+        <p>向下滚动页面，导航栏会自动隐藏；向上滚动时重新显示。</p>
+      </div>
+
+      <div class="demo-card">
+        <h3>4. 状态监听</h3>
+        <p>打开浏览器控制台，查看菜单状态变化的日志输出。</p>
+      </div>
+
+      <!-- 占位内容，用于演示滚动效果 -->
+      <div class="placeholder">
+        <p>向下滚动查看导航栏隐藏效果...</p>
+      </div>
+      <div class="placeholder">
+        <p>继续滚动...</p>
+      </div>
+      <div class="placeholder">
+        <p>向上滚动导航栏会重新显示</p>
+      </div>
+      <div class="placeholder">
+        <p>滚动到顶部</p>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="navigation.js"></script>
+</body>
+</html>

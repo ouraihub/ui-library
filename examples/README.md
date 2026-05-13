@@ -9,7 +9,10 @@ examples/
 ├── hugo/              # Hugo 使用示例
 │   ├── basic-theme-toggle/      # 基础主题切换
 │   ├── custom-styling/          # 自定义样式
-│   └── multiple-instances/      # 多实例使用
+│   ├── multiple-instances/      # 多实例使用
+│   ├── navigation/              # 导航菜单
+│   ├── lazy-loading/            # 懒加载
+│   └── search/                  # 搜索模态框
 ├── astro/             # Astro 使用示例（占位）
 │   ├── basic-theme-toggle/      # 基础主题切换
 │   └── island-architecture/     # Island 架构集成
@@ -42,6 +45,27 @@ examples/
 **路径**: `hugo/multiple-instances/`  
 **难度**: ⭐⭐  
 **时间**: 10 分钟
+
+### 4. 导航菜单
+完整的响应式导航菜单，支持移动端菜单和下拉菜单。
+
+**路径**: `hugo/navigation/`  
+**难度**: ⭐⭐⭐  
+**时间**: 20 分钟
+
+### 5. 懒加载
+图片和内容懒加载，提升页面加载性能。
+
+**路径**: `hugo/lazy-loading/`  
+**难度**: ⭐⭐  
+**时间**: 15 分钟
+
+### 6. 搜索模态框
+全功能搜索模态框，支持键盘快捷键和防抖搜索。
+
+**路径**: `hugo/search/`  
+**难度**: ⭐⭐⭐  
+**时间**: 25 分钟
 
 ## Astro 示例（占位）
 
