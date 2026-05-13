@@ -11,16 +11,15 @@
       "import": "./dist/index.js"
     },
     "./SEO.astro": {
-      "types": "./src/components/SEO.astro.d.ts",
-      "default": "./src/components/SEO.astro"
+      "types": "./dist/components/SEO.astro.d.ts",
+      "default": "./dist/components/SEO.astro"
     }
   },
   "files": [
-    "dist",
-    "src/components"
+    "dist"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && node ./scripts/copy-components.mjs",
     "typecheck": "tsc --noEmit"
   },
   "keywords": [
