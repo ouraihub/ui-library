@@ -58,8 +58,26 @@ async function checkCircularDeps() {
     if (process.argv.includes('--graph')) {
       console.log(chalk.blue('📊 Generating dependency graph...\n'));
       const imagePath = join(rootDir, 'dependency-graph.svg');
-      await result.image(imagePath);
-      console.log(chalk.green(`✅ Dependency graph saved to: ${imagePath}\n`));
+      try {
+        await result.image(imagePath);
+        console.log(chalk.green(`✅ Dependency graph saved to: ${imagePath}\n`));
+      } catch (graphError) {
+        const message = graphError?.message ?? String(graphError);
+        const graphvizMissing =
+          graphError?.code === 'ENOENT' ||
+          message.includes('Graphviz could not be found') ||
+          message.includes('gvpr');
+
+        if (graphvizMissing) {
+          console.warn(
+            chalk.yellow(
+              '⚠️ Graphviz is not installed; skipping dependency graph export.\n'
+            )
+          );
+        } else {
+          throw graphError;
+        }
+      }
     }
     
     // 可选：显示统计信息
