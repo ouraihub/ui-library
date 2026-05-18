@@ -34,6 +34,7 @@
 | [ADR-003](./003-css-variables-over-css-in-js.md) | 使用 CSS 变量而非 CSS-in-JS | 已接受 | 2026-05-12 |
 | [ADR-004](./004-monorepo-structure.md) | Monorepo 结构设计 | 已接受 | 2026-05-12 |
 | [ADR-005](./005-six-layer-architecture.md) | 六层架构设计 | 已接受 | 2026-05-12 |
+| [ADR-006](./006-daisyui-optional-skin-layer.md) | 采用 daisyUI 作为可选 UI 皮肤层 | 已接受 | 2026-05-18 |
 
 ## 相关文档
 
@@ -45,4 +46,4 @@
 ---
 
 **维护者**: Sisyphus (AI Agent)  
-**最后更新**: 2026-05-12
+**最后更新**: 2026-05-18

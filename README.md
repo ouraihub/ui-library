@@ -14,6 +14,7 @@
 
 - 🎯 **混合架构** - 核心逻辑用纯 TypeScript 类（100% 复用），UI 层用框架专用薄包装
 - 🚫 **不使用 Web Components** - 针对 SSG + Tailwind v4 场景优化，SEO 友好
+- 🎨 **可选 daisyUI 皮肤层** - 标准控件优先复用统一视觉，减少重复样式实现
 - 📦 **Monorepo 结构** - pnpm workspace + Turborepo，支持增量构建
 - ⚡ **快速上手** - 30 分钟创建第一个可复用组件
 - 🔒 **类型安全** - 100% TypeScript 覆盖，strict 模式
@@ -205,6 +206,8 @@ Layer 0: Design Tokens（设计令牌层）- 颜色、间距、字体
 - 🎨 [ADR-003: CSS 变量方案](docs/decisions/003-css-variables-over-css-in-js.md) - 样式系统选择
 - 📦 [ADR-004: Monorepo 结构](docs/decisions/004-monorepo-structure.md) - 包结构设计
 - 🏛️ [ADR-005: 六层架构](docs/decisions/005-six-layer-architecture.md) - 六层架构设计
+- 🎨 [ADR-006: 可选 daisyUI 皮肤层](docs/decisions/006-daisyui-optional-skin-layer.md) - 标准控件视觉统一与渐进式迁移
+- 🏛️ [ADR-005: 六层架构](docs/decisions/005-six-layer-architecture.md) - 六层架构设计
 
 ### 开发指南
 
@@ -329,7 +332,7 @@ MIT License - 详见 [LICENSE](LICENSE) 文件
 
 - **文档维护**: Sisyphus (AI Agent)
 - **项目版本**: v0.1.0
-- **最后更新**: 2026-05-13
+- **最后更新**: 2026-05-18
 - **仓库**: [github.com/ouraihub/ui-library](https://github.com/ouraihub/ui-library)
 
 ## 致谢

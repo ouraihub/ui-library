@@ -1,7 +1,7 @@
 # 文档索引
 
 > **版本**: 1.4.0  
-> **最后更新**: 2026-05-12  
+> **最后更新**: 2026-05-18
 > **状态**: approved  
 > **维护者**: Sisyphus (AI Agent)
 
@@ -12,6 +12,7 @@
 **核心特点**：
 - 🎯 **混合架构** - 核心逻辑用纯 TypeScript 类（100% 复用），UI 层用框架专用薄包装
 - 🚫 **不使用 Web Components** - 针对 SSG + Tailwind v4 场景优化，SEO 友好
+- 🎨 **可选 daisyUI 皮肤层** - 标准控件优先复用统一视觉，减少重复样式实现
 - 📦 **Monorepo 结构** - pnpm workspace + Turborepo，支持增量构建
 - ⚡ **快速上手** - 30 分钟创建第一个可复用组件
 
@@ -34,7 +35,9 @@ docs/
 │   ├── 001-hybrid-architecture.md               # 混合架构决策
 │   ├── 002-no-web-components.md                 # Web Components 权衡
 │   ├── 003-css-variables-over-css-in-js.md      # CSS 变量方案
-│   └── 004-monorepo-structure.md                # Monorepo 结构
+│   ├── 004-monorepo-structure.md                # Monorepo 结构
+│   ├── 005-six-layer-architecture.md            # 六层架构设计
+│   └── 006-daisyui-optional-skin-layer.md       # 可选 daisyUI 皮肤层
 │
 ├── analysis/                                    # 分析报告
 │   ├── 01-projects-overview.md                 # 项目概览与技术栈对比
@@ -90,6 +93,8 @@ docs/
 - 🚫 [ADR-002: 不使用 Web Components](./decisions/002-no-web-components.md) - Web Components 的权衡
 - 🎨 [ADR-003: CSS 变量方案](./decisions/003-css-variables-over-css-in-js.md) - 样式系统选择
 - 📦 [ADR-004: Monorepo 结构](./decisions/004-monorepo-structure.md) - 包结构设计
+- 🏛️ [ADR-005: 六层架构](./decisions/005-six-layer-architecture.md) - 六层架构设计
+- 🎨 [ADR-006: 可选 daisyUI 皮肤层](./decisions/006-daisyui-optional-skin-layer.md) - 标准控件视觉统一与渐进式迁移
 
 ## 📊 核心数据
 
@@ -128,7 +133,7 @@ docs/
 | Web Components | ❌ 不使用 | SSG + Tailwind v4 不适合 |
 | 核心逻辑 | 纯 TypeScript 类 | 100% 跨框架复用 |
 | UI 层 | Hugo partials + Astro 组件 | 原生语法，SEO 友好 |
-| 样式方案 | CSS 变量 + Tailwind | 主题化 + 工具类 |
+| 样式方案 | CSS 变量 + Tailwind + 可选 daisyUI 皮肤层 | 主题化 + 工具类，降低标准组件样板 |
 | 构建工具 | esbuild + Turborepo | 快速构建 + Monorepo 优化 |
 
 ### 优先级
@@ -273,7 +278,7 @@ graph TB
 
 ### 文档版本
 - **创建日期**: 2026-05-12
-- **最后更新**: 2026-05-12
+- **最后更新**: 2026-05-18
 - **版本**: v1.4.0
 
 ### 贡献者
