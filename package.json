@@ -27,7 +27,8 @@
     "check:circular:stats": "node scripts/check-circular-deps.js --stats",
     "prepare": "husky install",
     "changeset": "changeset",
-    "release": "pnpm build"
+    "release": "pnpm build",
+    "release:publish": "pnpm build && pnpm changeset publish"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.1",
