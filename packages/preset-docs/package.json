@@ -57,5 +57,8 @@
   "devDependencies": {
     "esbuild": "^0.28.0",
     "typescript": "^5.9.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
