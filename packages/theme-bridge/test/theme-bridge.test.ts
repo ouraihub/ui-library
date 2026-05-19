@@ -81,4 +81,104 @@ describe('DaisyThemeBridge', () => {
     expect(assertDaisyThemeName('emerald')).toBe('emerald');
     expect(RECOMMENDED_OURAIHUB_DAISY_THEMES).toContain('night');
   });
+
+  it('supports system mode, custom apply hooks, listeners, and cleanup branches', () => {
+    const target = document.createElement('div');
+    const appliedThemes: string[] = [];
+    const listenerCalls: string[] = [];
+
+    const originalMatchMedia = window.matchMedia;
+    const listeners: Array<() => void> = [];
+
+    window.matchMedia = (() => ({
+      matches: true,
+      media: '(prefers-color-scheme: dark)',
+      onchange: null,
+      addEventListener: undefined,
+      removeEventListener: undefined,
+      addListener: (handler: () => void) => listeners.push(handler),
+      removeListener: () => undefined,
+      dispatchEvent: () => false,
+    })) as typeof window.matchMedia;
+
+    const bridge = new DaisyThemeBridge({
+      target,
+      themes,
+      defaultSemanticTheme: 'playful',
+      defaultMode: 'system',
+      onApplyTheme: ({ daisyTheme }) => {
+        appliedThemes.push(daisyTheme);
+      },
+    });
+
+    const unsubscribe = bridge.onChange(() => {
+      listenerCalls.push(`${bridge.getSemanticTheme()}:${bridge.getMode()}`);
+    });
+
+    expect(bridge.resolveMode()).toBe('dark');
+    expect(appliedThemes).toContain('cupcake');
+
+    bridge.setMode('system');
+    listeners[0]?.();
+    expect(listenerCalls.length).toBeGreaterThan(0);
+
+    unsubscribe();
+    bridge.setSemanticTheme('light');
+    expect(target.getAttribute('data-theme-mode')).toBe('light');
+
+    window.matchMedia = originalMatchMedia;
+  });
+
+  it('handles invalid configuration and localStorage failures', () => {
+    const getItemSpy = vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
+      throw new Error('storage unavailable');
+    });
+    const setItemSpy = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new Error('storage unavailable');
+    });
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+
+    const bridge = new DaisyThemeBridge({
+      target: document.documentElement,
+      themes,
+      defaultSemanticTheme: 'light',
+    });
+
+    bridge.setMode('dark');
+    bridge.setSemanticTheme('playful');
+
+    expect(warnSpy).toHaveBeenCalled();
+    expect(() => bridge.getThemeConfig('missing-theme')).not.toThrow();
+
+    expect(() => new DaisyThemeBridge({
+      target: document.documentElement,
+      themes: {},
+      defaultSemanticTheme: 'missing-theme',
+    })).toThrow();
+
+    setItemSpy.mockRestore();
+    getItemSpy.mockRestore();
+    warnSpy.mockRestore();
+  });
+
+  it('renders without mode controls and supports destroy', () => {
+    const bridge = new DaisyThemeBridge({
+      target: document.documentElement,
+      themes,
+      defaultSemanticTheme: 'light',
+    });
+
+    const container = document.createElement('div');
+    document.body.appendChild(container);
+
+    const switcher = new ThemeSwitcher({
+      container,
+      bridge,
+      showModeControls: false,
+    });
+
+    expect(container.querySelector('[data-theme-mode]')).toBeNull();
+
+    switcher.destroy();
+  });
 });
