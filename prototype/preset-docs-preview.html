@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Preset Preview - Docs</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --surface: #ffffff;
+      --surface-soft: #f8fbff;
+      --text: #1b2430;
+      --text-soft: #5d6978;
+      --border: #d9e1ec;
+      --primary: #0f6fff;
+      --primary-soft: #edf4ff;
+      --code-bg: #161b22;
+      --code-text: #e6edf3;
+      --note: #eaf3ff;
+      --tip: #eafaf1;
+      --warn: #fff7e8;
+      --danger: #fff0f0;
+      --shadow: 0 14px 32px rgba(14, 24, 39, 0.08);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, "Segoe UI", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+    .app {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 260px minmax(0, 1fr) 240px;
+      gap: 24px;
+      max-width: 1480px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+    }
+    .sidebar {
+      padding: 18px 16px;
+      position: sticky;
+      top: 20px;
+      height: calc(100vh - 40px);
+      overflow: auto;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 18px;
+      font-weight: 700;
+      font-size: 18px;
+    }
+    .logo {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #0f6fff, #7fb3ff);
+    }
+    .search {
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: var(--surface-soft);
+      border: 1px solid var(--border);
+      color: var(--text-soft);
+      font-size: 14px;
+      margin-bottom: 18px;
+    }
+    .group {
+      margin-bottom: 22px;
+    }
+    .group h4 {
+      margin: 0 0 10px;
+      font-size: 12px;
+      text-transform: uppercase;
+      color: var(--text-soft);
+      letter-spacing: 0.06em;
+    }
+    .nav {
+      display: grid;
+      gap: 6px;
+    }
+    .nav a {
+      display: block;
+      padding: 10px 12px;
+      border-radius: 10px;
+      color: var(--text-soft);
+      text-decoration: none;
+      font-size: 14px;
+    }
+    .nav a.active {
+      background: var(--primary-soft);
+      color: var(--primary);
+      font-weight: 600;
+    }
+    .content {
+      min-width: 0;
+    }
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+    .crumbs {
+      color: var(--text-soft);
+      font-size: 14px;
+    }
+    .kbd {
+      padding: 4px 8px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--text-soft);
+      font-size: 12px;
+    }
+    .article {
+      padding: 30px 34px;
+    }
+    .eyebrow {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: var(--primary-soft);
+      color: var(--primary);
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .article h1 {
+      margin: 18px 0 10px;
+      font-size: 42px;
+      line-height: 1.1;
+    }
+    .lead {
+      margin: 0 0 22px;
+      color: var(--text-soft);
+      font-size: 18px;
+      line-height: 1.7;
+      max-width: 760px;
+    }
+    .callouts {
+      display: grid;
+      gap: 12px;
+      margin-bottom: 22px;
+    }
+    .callout {
+      border-left: 4px solid;
+      border-radius: 12px;
+      padding: 14px 16px;
+      font-size: 14px;
+    }
+    .note { background: var(--note); border-color: #0f6fff; }
+    .tip { background: var(--tip); border-color: #1f9d55; }
+    .warning { background: var(--warn); border-color: #d98e04; }
+    h2 {
+      margin: 28px 0 12px;
+      font-size: 28px;
+    }
+    p {
+      margin: 0 0 16px;
+      line-height: 1.8;
+      color: #293445;
+    }
+    pre {
+      margin: 18px 0 24px;
+      padding: 18px;
+      background: var(--code-bg);
+      color: var(--code-text);
+      border-radius: 16px;
+      overflow: auto;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+    .api {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      margin: 18px 0 24px;
+    }
+    .api-head, .api-row {
+      display: grid;
+      grid-template-columns: 180px 140px 1fr;
+      gap: 16px;
+      padding: 14px 16px;
+    }
+    .api-head {
+      background: #f7f9fc;
+      font-weight: 700;
+    }
+    .api-row {
+      border-top: 1px solid var(--border);
+      font-size: 14px;
+    }
+    .pagination {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 30px;
+      padding-top: 22px;
+      border-top: 1px solid var(--border);
+      color: var(--text-soft);
+      font-size: 14px;
+    }
+    .toc {
+      padding: 18px 16px;
+      position: sticky;
+      top: 20px;
+      height: fit-content;
+    }
+    .toc h4 {
+      margin: 0 0 10px;
+      font-size: 13px;
+      text-transform: uppercase;
+      color: var(--text-soft);
+      letter-spacing: 0.06em;
+    }
+    .toc-list {
+      display: grid;
+      gap: 8px;
+      font-size: 14px;
+      color: var(--text-soft);
+    }
+    .toc-list .active {
+      color: var(--primary);
+      font-weight: 600;
+    }
+    @media (max-width: 1120px) {
+      .app {
+        grid-template-columns: 240px minmax(0,1fr);
+      }
+      .toc { display: none; }
+    }
+    @media (max-width: 860px) {
+      .app {
+        grid-template-columns: 1fr;
+      }
+      .sidebar {
+        position: static;
+        height: auto;
+      }
+      .article {
+        padding: 22px;
+      }
+      .article h1 {
+        font-size: 34px;
+      }
+      .api-head, .api-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar panel">
+      <div class="brand">
+        <div class="logo"></div>
+        <span>@ouraihub/preset-docs</span>
+      </div>
+      <div class="search">Search documentation... <span style="float:right;">Ctrl+K</span></div>
+
+      <div class="group">
+        <h4>Getting Started</h4>
+        <div class="nav">
+          <a class="active" href="#">Introduction</a>
+          <a href="#">Installation</a>
+          <a href="#">Quick Start</a>
+        </div>
+      </div>
+
+      <div class="group">
+        <h4>Guides</h4>
+        <div class="nav">
+          <a href="#">Presets</a>
+          <a href="#">Components</a>
+          <a href="#">Layouts</a>
+          <a href="#">Theming</a>
+        </div>
+      </div>
+
+      <div class="group">
+        <h4>Reference</h4>
+        <div class="nav">
+          <a href="#">API</a>
+          <a href="#">CLI</a>
+          <a href="#">Configuration</a>
+        </div>
+      </div>
+    </aside>
+
+    <main class="content">
+      <div class="topbar">
+        <div class="crumbs">Docs / Presets / Documentation Site Preset</div>
+        <div class="kbd">Copy page link</div>
+      </div>
+
+      <article class="article panel">
+        <span class="eyebrow">文档预设 · 导航优先 · 技术内容站点</span>
+        <h1>它给人的感觉是：我马上能找到要看的章节，并且能直接复制代码。</h1>
+        <p class="lead">这一套更像开发者文档中心。左边是导航树，中间是正文，右边是目录。页面强调代码块、提示框、搜索、面包屑和 API 参考区块。</p>
+
+        <div class="callouts">
+          <div class="callout note"><strong>Note:</strong> 适合产品文档、SDK 文档、组件库文档，而不是偏情绪表达和连续阅读的内容专栏。</div>
+          <div class="callout tip"><strong>Tip:</strong> 你会默认得到 Sidebar、TOC、CodeBlock、Callout、Breadcrumb、SearchModal、ApiReference 这些文档组件角色。</div>
+        </div>
+
+        <h2>页面骨架是“查找效率”导向</h2>
+        <p>和博客预设不一样，文档预设不会把“文章氛围感”放在前面。它先考虑的是导航深度、跳转效率、技术信息密度，以及用户能否快速定位到参数、步骤和示例代码。</p>
+
+        <pre><code>import { docsPreset } from '@ouraihub/preset-docs'
+
+export default {
+  presets: [docsPreset]
+}</code></pre>
+
+        <h2>典型内容块会长这样</h2>
+        <p>除了正文，它还会天然适合承载 API 参数表、告警说明、代码块、搜索入口和分页导航。你可以把它想成一套给“说明型页面”准备好的版式和默认气质。</p>
+
+        <div class="api">
+          <div class="api-head">
+            <div>Field</div>
+            <div>Type</div>
+            <div>Description</div>
+          </div>
+          <div class="api-row">
+            <div><code>presets</code></div>
+            <div><code>Preset[]</code></div>
+            <div>注册一个或多个预设，统一注入 token、组件配置和布局配置。</div>
+          </div>
+          <div class="api-row">
+            <div><code>layout</code></div>
+            <div><code>LayoutConfig</code></div>
+            <div>控制文档页面骨架，比如 sidebar、content、toc 的区域关系。</div>
+          </div>
+          <div class="api-row">
+            <div><code>components</code></div>
+            <div><code>ComponentConfig[]</code></div>
+            <div>定义 CodeBlock、Callout、SearchModal、Breadcrumb 等默认行为。</div>
+          </div>
+        </div>
+
+        <div class="callout warning"><strong>Warning:</strong> 如果你的主要目标是展示观点、故事和系列文章，而不是技术信息检索，这套会显得太“工具化”。</div>
+
+        <div class="pagination">
+          <span>Previous: Layout Overview</span>
+          <span>Next: API Reference</span>
+        </div>
+      </article>
+    </main>
+
+    <aside class="toc panel">
+      <h4>On this page</h4>
+      <div class="toc-list">
+        <span class="active">页面骨架是“查找效率”导向</span>
+        <span>代码示例</span>
+        <span>API 参数表</span>
+        <span>提示框与分页</span>
+      </div>
+    </aside>
+  </div>
+</body>
+</html>

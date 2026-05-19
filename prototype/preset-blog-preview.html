@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Preset Preview - Blog</title>
+  <style>
+    :root {
+      --bg: #f6f8fb;
+      --surface: #ffffff;
+      --surface-soft: #f0f5ff;
+      --text: #1c1f26;
+      --text-soft: #5b6472;
+      --border: #dbe3ef;
+      --primary: #0d6efd;
+      --primary-soft: #e8f1ff;
+      --accent: #f4b400;
+      --success: #1f9d55;
+      --shadow: 0 16px 40px rgba(21, 35, 52, 0.08);
+      --radius: 18px;
+      --radius-sm: 10px;
+      --content-width: 1180px;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, "Segoe UI", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+    }
+    a { color: inherit; text-decoration: none; }
+    .shell {
+      max-width: var(--content-width);
+      margin: 0 auto;
+      padding: 24px;
+    }
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .brand {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 0;
+    }
+    .nav {
+      display: flex;
+      gap: 18px;
+      color: var(--text-soft);
+      font-size: 14px;
+    }
+    .hero {
+      background: linear-gradient(135deg, #eff5ff 0%, #ffffff 52%, #fff7df 100%);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 44px;
+      box-shadow: var(--shadow);
+      margin-bottom: 28px;
+    }
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.9);
+      border: 1px solid var(--border);
+      font-size: 13px;
+      color: var(--text-soft);
+    }
+    .hero h1 {
+      margin: 18px 0 12px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 52px;
+      line-height: 1.1;
+      max-width: 800px;
+    }
+    .hero p {
+      max-width: 720px;
+      font-size: 19px;
+      color: var(--text-soft);
+      margin: 0;
+    }
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 22px;
+      color: var(--text-soft);
+      font-size: 14px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 300px;
+      gap: 28px;
+      align-items: start;
+    }
+    .content-stack {
+      display: grid;
+      gap: 24px;
+    }
+    .section-title {
+      margin: 0 0 10px;
+      font-size: 14px;
+      text-transform: uppercase;
+      color: var(--text-soft);
+      letter-spacing: 0.06em;
+    }
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 20px;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+    .card.featured {
+      background: var(--primary-soft);
+      border: 2px solid rgba(13, 110, 253, 0.25);
+    }
+    .thumb {
+      height: 180px;
+      background:
+        radial-gradient(circle at top right, rgba(255,255,255,0.8), transparent 34%),
+        linear-gradient(135deg, #8cb7ff, #3f70d8);
+    }
+    .card-body {
+      padding: 22px;
+    }
+    .kicker {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      font-size: 12px;
+      color: var(--text-soft);
+      margin-bottom: 10px;
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: #fff;
+      border: 1px solid var(--border);
+      font-size: 12px;
+      color: var(--text-soft);
+    }
+    .card h3 {
+      margin: 0 0 10px;
+      font-size: 24px;
+      line-height: 1.25;
+    }
+    .card p {
+      margin: 0 0 16px;
+      color: var(--text-soft);
+      font-size: 15px;
+    }
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .tag {
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      font-size: 12px;
+      color: var(--text-soft);
+    }
+    .article-preview {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 34px;
+      box-shadow: var(--shadow);
+    }
+    .article-preview h2 {
+      margin: 0 0 12px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 38px;
+      line-height: 1.15;
+    }
+    .article-preview p {
+      margin: 0 0 18px;
+      font-size: 18px;
+      color: #2c3440;
+    }
+    .article-preview .meta {
+      color: var(--text-soft);
+      font-size: 14px;
+      margin-bottom: 22px;
+    }
+    .article-preview blockquote {
+      margin: 22px 0;
+      padding: 18px 22px;
+      border-left: 4px solid var(--primary);
+      background: #f8fbff;
+      border-radius: 0 12px 12px 0;
+      color: #314055;
+    }
+    .article-preview pre {
+      margin: 22px 0;
+      padding: 18px;
+      overflow: auto;
+      background: #111827;
+      color: #eff6ff;
+      border-radius: 16px;
+      font-size: 14px;
+    }
+    .sidebar {
+      display: grid;
+      gap: 18px;
+      position: sticky;
+      top: 24px;
+    }
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+    }
+    .panel h4 {
+      margin: 0 0 12px;
+      font-size: 16px;
+    }
+    .toc-list, .author-links, .related-list {
+      display: grid;
+      gap: 10px;
+      color: var(--text-soft);
+      font-size: 14px;
+    }
+    .author {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+    .avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #2c7be5, #9dd2ff);
+      flex: 0 0 auto;
+    }
+    .pager {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 22px;
+    }
+    .pager span {
+      min-width: 38px;
+      padding: 10px 12px;
+      text-align: center;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      font-weight: 600;
+      color: var(--text-soft);
+    }
+    .pager .active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+    @media (max-width: 980px) {
+      .grid { grid-template-columns: 1fr; }
+      .cards { grid-template-columns: 1fr; }
+      .hero { padding: 28px; }
+      .hero h1 { font-size: 40px; }
+      .sidebar { position: static; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <div class="topbar">
+      <div class="brand">@ouraihub/preset-blog</div>
+      <div class="nav">
+        <a href="#">首页</a>
+        <a href="#">归档</a>
+        <a href="#">标签</a>
+        <a href="#">关于</a>
+      </div>
+    </div>
+
+    <section class="hero">
+      <span class="hero-tag">博客预设 · 阅读优先 · 内容型站点</span>
+      <h1>它给人的感觉是：一进来就想点开文章，停下来读完。</h1>
+      <p>这一套更强调文章卡片、摘要、标签、作者信息、目录和相关文章。页面像内容产品，不像后台，也不像说明书。</p>
+      <div class="hero-meta">
+        <span>更大的正文</span>
+        <span>更宽松的行高</span>
+        <span>文章页居中阅读</span>
+        <span>首页卡片流</span>
+      </div>
+    </section>
+
+    <div class="grid">
+      <main class="content-stack">
+        <section>
+          <p class="section-title">首页会更像这样</p>
+          <div class="cards">
+            <article class="card featured">
+              <div class="thumb"></div>
+              <div class="card-body">
+                <div class="kicker">
+                  <span class="pill">Featured</span>
+                  <span>May 19 · 8 min read</span>
+                </div>
+                <h3>设计系统落地，不是堆组件，而是先统一页面气质</h3>
+                <p>首页文章卡片默认会强调摘要、缩略图和标签，这种展示方式天然适合博客、专栏、内容站，而不是 API 文档目录。</p>
+                <div class="tags">
+                  <span class="tag">Design System</span>
+                  <span class="tag">UI Library</span>
+                  <span class="tag">Preset</span>
+                </div>
+              </div>
+            </article>
+
+            <article class="card">
+              <div class="thumb" style="background: linear-gradient(135deg,#d8e7ff,#7ca6f8);"></div>
+              <div class="card-body">
+                <div class="kicker">May 17 · 5 min read</div>
+                <h3>为什么博客预设会默认保留作者信息和相关文章</h3>
+                <p>因为它服务的是“连续阅读”和“内容消费”，不是一次性查完即走的技术文档访问路径。</p>
+                <div class="tags">
+                  <span class="tag">Author Bio</span>
+                  <span class="tag">Related Posts</span>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="article-preview">
+          <p class="section-title">文章详情页会更像这样</p>
+          <h2>文章内容居中，文字更大，阅读节奏更慢，适合长文。</h2>
+          <div class="meta">作者 OurAI Hub · 2026-05-19 · 分类：架构 / 设计系统 / 内容策略</div>
+          <p>这类预设默认会让正文区域更像“阅读器”。主内容通常限制宽度，减少一行过长带来的疲劳，同时把行高放宽，让眼睛移动更轻松。</p>
+          <p>目录、作者简介、评论区和相关文章并不是主角，它们是围绕正文服务的。页面核心是“把一篇文章读完”，不是“快速跳转到另一个 API 页”。</p>
+          <blockquote>直观理解：如果你的网站希望用户停留、阅读、感受观点，博客预设是顺手的；如果用户主要是查参数、复制代码、顺着导航找答案，它就不够对味。</blockquote>
+          <pre><code>ArticleCard
+AuthorBio
+TableOfContents
+Comments
+RelatedPosts
+Pagination</code></pre>
+          <p>所以它不是单纯给你一堆组件名，而是默认帮你把这些页面元素放在“内容型产品”该有的位置上。</p>
+        </section>
+
+        <div class="pager">
+          <span>Prev</span>
+          <span class="active">1</span>
+          <span>2</span>
+          <span>3</span>
+          <span>Next</span>
+        </div>
+      </main>
+
+      <aside class="sidebar">
+        <section class="panel">
+          <h4>目录</h4>
+          <div class="toc-list">
+            <span>1. 首页文章卡片流</span>
+            <span>2. 文章页居中阅读</span>
+            <span>3. 作者信息与评论区</span>
+            <span>4. 相关文章推荐</span>
+          </div>
+        </section>
+
+        <section class="panel">
+          <h4>作者</h4>
+          <div class="author">
+            <div class="avatar"></div>
+            <div>
+              <div style="font-weight:700; margin-bottom:6px;">OurAI Hub</div>
+              <div style="color:var(--text-soft); font-size:14px;">偏内容型的设计系统与产品体验作者页，默认更像专栏主页气质。</div>
+            </div>
+          </div>
+          <div class="author-links" style="margin-top:14px;">
+            <span>X / GitHub / RSS</span>
+          </div>
+        </section>
+
+        <section class="panel">
+          <h4>相关文章</h4>
+          <div class="related-list">
+            <span>如何设计标签页而不是信息堆叠页</span>
+            <span>为什么长文需要更慢的视觉节奏</span>
+            <span>博客站点中的目录应该服务谁</span>
+          </div>
+        </section>
+      </aside>
+    </div>
+  </div>
+</body>
+</html>

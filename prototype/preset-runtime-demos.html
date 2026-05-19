@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Preset Runtime Demos</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Inter, "Segoe UI", Arial, sans-serif;
+      background: #f3f6fb;
+      color: #1d2430;
+    }
+    .wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 40px 24px 64px;
+    }
+    h1 {
+      margin: 0 0 12px;
+      font-size: 40px;
+      line-height: 1.1;
+    }
+    p {
+      margin: 0;
+      font-size: 18px;
+      line-height: 1.7;
+      color: #5c6573;
+      max-width: 780px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 24px;
+      margin-top: 32px;
+    }
+    .card {
+      background: #fff;
+      border: 1px solid #dbe3ef;
+      border-radius: 22px;
+      padding: 24px;
+      box-shadow: 0 18px 42px rgba(17, 25, 40, 0.08);
+    }
+    .thumb {
+      height: 220px;
+      border-radius: 16px;
+      margin-bottom: 18px;
+      border: 1px solid #dbe3ef;
+      overflow: hidden;
+      position: relative;
+      background: #f8fbff;
+    }
+    .thumb.blog::before,
+    .thumb.blog::after,
+    .thumb.docs::before,
+    .thumb.docs::after {
+      content: "";
+      position: absolute;
+      background: #fff;
+      box-shadow: 0 10px 22px rgba(17, 25, 40, 0.08);
+    }
+    .thumb.blog {
+      background: linear-gradient(135deg, #f8fbff, #fff4d8);
+    }
+    .thumb.blog::before {
+      left: 14px;
+      right: 14px;
+      top: 14px;
+      height: 70px;
+      border-radius: 14px;
+    }
+    .thumb.blog::after {
+      left: 14px;
+      top: 96px;
+      width: 150px;
+      height: 98px;
+      border-radius: 14px;
+    }
+    .thumb.docs {
+      background: linear-gradient(135deg, #eef4ff, #f8fbff);
+    }
+    .thumb.docs::before {
+      left: 14px;
+      top: 14px;
+      bottom: 14px;
+      width: 54px;
+      border-radius: 12px;
+    }
+    .thumb.docs::after {
+      left: 82px;
+      right: 14px;
+      top: 14px;
+      bottom: 14px;
+      border-radius: 12px;
+    }
+    h2 {
+      margin: 0 0 10px;
+      font-size: 28px;
+    }
+    .meta {
+      color: #0f6fff;
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 12px;
+    }
+    .link {
+      display: inline-flex;
+      margin-top: 18px;
+      padding: 12px 16px;
+      border-radius: 12px;
+      background: #0f6fff;
+      color: #fff;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    @media (max-width: 800px) {
+      .grid { grid-template-columns: 1fr; }
+      h1 { font-size: 34px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>更接近真实落地效果的两个 HTML</h1>
+    <p>这组不是概念图，而是把 preset 里真实存在的组件角色、布局倾向和 token 气质组合成更像最终站点的页面。原来的预览文件没有改，这里是新增的一组。</p>
+    <div class="grid">
+      <section class="card">
+        <div class="thumb blog"></div>
+        <div class="meta">文章首页 + 文章页 + 作者 + 评论 + 相关文章</div>
+        <h2>Blog runtime demo</h2>
+        <p>更接近真实博客站。你能看到 ArticleCard、Tag、Pagination、AuthorBio、Comments、RelatedPosts 在页面里怎么一起工作。</p>
+        <a class="link" href="./preset-blog-runtime-demo.html">打开 Blog runtime demo</a>
+      </section>
+      <section class="card">
+        <div class="thumb docs"></div>
+        <div class="meta">Sidebar + TOC + CodeBlock + Callout + API 区块</div>
+        <h2>Docs runtime demo</h2>
+        <p>更接近真实文档站。你能看到 Sidebar、SearchModal、Breadcrumb、CodeBlock、Callout、ApiReference 的页面组织方式。</p>
+        <a class="link" href="./preset-docs-runtime-demo.html">打开 Docs runtime demo</a>
+      </section>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daisy Theme Bridge Demo</title>
+  <style>
+    :root {
+      --bg: #f3f6fb;
+      --surface: #ffffff;
+      --surface-soft: #f8fbff;
+      --text: #1c2431;
+      --text-soft: #5c6778;
+      --border: #dbe3ef;
+      --shadow: 0 18px 42px rgba(17, 25, 40, 0.08);
+      --radius: 18px;
+      --radius-sm: 12px;
+    }
+
+    [data-theme="light"] {
+      --demo-bg: #f8fbff;
+      --demo-surface: #ffffff;
+      --demo-text: #1b2330;
+      --demo-text-soft: #5d6775;
+      --demo-primary: #0f6fff;
+      --demo-primary-soft: #eaf3ff;
+      --demo-accent: #11a36a;
+      --demo-code: #0f172a;
+      --demo-code-text: #e2e8f0;
+      --demo-border: #d7e0ee;
+    }
+
+    [data-theme="night"] {
+      --demo-bg: #0f1724;
+      --demo-surface: #172131;
+      --demo-text: #edf2ff;
+      --demo-text-soft: #a9b5cb;
+      --demo-primary: #72a8ff;
+      --demo-primary-soft: #1a2a42;
+      --demo-accent: #6ee7b7;
+      --demo-code: #0b1220;
+      --demo-code-text: #dbe7ff;
+      --demo-border: #2a3952;
+    }
+
+    [data-theme="cupcake"] {
+      --demo-bg: #fff7fb;
+      --demo-surface: #ffffff;
+      --demo-text: #3a2745;
+      --demo-text-soft: #7f6b8a;
+      --demo-primary: #e779c1;
+      --demo-primary-soft: #fff0f9;
+      --demo-accent: #65c3c8;
+      --demo-code: #432b53;
+      --demo-code-text: #ffeefd;
+      --demo-border: #f0d6e7;
+    }
+
+    [data-theme="emerald"] {
+      --demo-bg: #f3fbf8;
+      --demo-surface: #ffffff;
+      --demo-text: #15362b;
+      --demo-text-soft: #56756b;
+      --demo-primary: #66cc8a;
+      --demo-primary-soft: #e9f9ef;
+      --demo-accent: #377cfb;
+      --demo-code: #17392f;
+      --demo-code-text: #e7fff4;
+      --demo-border: #cfe9db;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, "Segoe UI", Arial, sans-serif;
+    }
+    .page {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 32px 24px 56px;
+    }
+    h1, h2, h3 {
+      margin: 0;
+      line-height: 1.15;
+    }
+    p {
+      margin: 0;
+      line-height: 1.7;
+      color: var(--text-soft);
+    }
+    .hero {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 24px;
+      margin-bottom: 28px;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    .hero-main {
+      padding: 30px;
+    }
+    .eyebrow {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: #edf4ff;
+      color: #0f6fff;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+    .hero-main h1 {
+      font-size: 44px;
+      margin-bottom: 14px;
+    }
+    .hero-main p {
+      font-size: 18px;
+      max-width: 760px;
+    }
+    .hero-side {
+      padding: 24px;
+      display: grid;
+      gap: 16px;
+      align-content: start;
+    }
+    .hero-side h3 {
+      font-size: 18px;
+      margin-bottom: 8px;
+    }
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .chip {
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: #f8fbff;
+      border: 1px solid var(--border);
+      color: var(--text-soft);
+      font-size: 13px;
+    }
+    .layout {
+      display: grid;
+      grid-template-columns: 360px minmax(0, 1fr);
+      gap: 24px;
+    }
+    .controls {
+      padding: 22px;
+      display: grid;
+      gap: 18px;
+      align-content: start;
+      position: sticky;
+      top: 20px;
+    }
+    .section-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .field {
+      display: grid;
+      gap: 10px;
+    }
+    .segmented {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+    .segmented button,
+    .theme-list button {
+      appearance: none;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--text-soft);
+      border-radius: 12px;
+      padding: 12px 14px;
+      cursor: pointer;
+      font: inherit;
+    }
+    .segmented button.active,
+    .theme-list button.active {
+      background: #eaf3ff;
+      border-color: #9ac1ff;
+      color: #0f6fff;
+      font-weight: 600;
+    }
+    .theme-list {
+      display: grid;
+      gap: 10px;
+    }
+    .theme-button {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      text-align: left;
+    }
+    .swatches {
+      display: flex;
+      gap: 6px;
+      flex: 0 0 auto;
+    }
+    .swatch {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 1px solid rgba(0,0,0,0.08);
+    }
+    .status {
+      padding: 14px 16px;
+      border-radius: 14px;
+      background: #f8fbff;
+      border: 1px solid var(--border);
+      font-size: 14px;
+      color: var(--text-soft);
+    }
+    .code {
+      margin-top: 6px;
+      padding: 14px 16px;
+      border-radius: 14px;
+      background: #0f172a;
+      color: #dbeafe;
+      font-family: "Fira Code", Consolas, monospace;
+      font-size: 13px;
+      line-height: 1.7;
+      overflow: auto;
+    }
+    .demo-shell {
+      background: var(--demo-bg);
+      border-radius: 22px;
+      border: 1px solid var(--demo-border);
+      padding: 18px;
+      min-width: 0;
+    }
+    .demo-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+      color: var(--demo-text);
+    }
+    .demo-brand {
+      font-weight: 700;
+      font-size: 18px;
+    }
+    .demo-nav {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      color: var(--demo-text-soft);
+      font-size: 14px;
+    }
+    .demo-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 16px;
+    }
+    .demo-panel {
+      background: var(--demo-surface);
+      color: var(--demo-text);
+      border: 1px solid var(--demo-border);
+      border-radius: 18px;
+      padding: 22px;
+      min-width: 0;
+    }
+    .demo-panel h2 {
+      font-size: 30px;
+      margin-bottom: 12px;
+    }
+    .demo-panel p {
+      color: var(--demo-text-soft);
+      margin-bottom: 16px;
+    }
+    .demo-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+    .btn {
+      border: 0;
+      border-radius: 12px;
+      padding: 12px 14px;
+      font: inherit;
+      cursor: pointer;
+    }
+    .btn-primary {
+      background: var(--demo-primary);
+      color: #fff;
+    }
+    .btn-soft {
+      background: var(--demo-primary-soft);
+      color: var(--demo-primary);
+    }
+    .demo-stat {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+    .stat {
+      background: var(--demo-surface);
+      border: 1px solid var(--demo-border);
+      border-radius: 16px;
+      padding: 16px;
+    }
+    .stat strong {
+      display: block;
+      font-size: 22px;
+      color: var(--demo-text);
+    }
+    .stat span {
+      color: var(--demo-text-soft);
+      font-size: 13px;
+    }
+    .callout {
+      padding: 14px 16px;
+      border-radius: 14px;
+      background: var(--demo-primary-soft);
+      color: var(--demo-text);
+      border: 1px solid var(--demo-border);
+      margin-bottom: 14px;
+    }
+    .code-preview {
+      background: var(--demo-code);
+      color: var(--demo-code-text);
+      border-radius: 16px;
+      padding: 16px;
+      font-family: "Fira Code", Consolas, monospace;
+      font-size: 13px;
+      line-height: 1.7;
+      overflow: auto;
+    }
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 14px;
+      overflow: hidden;
+      border-radius: 12px;
+    }
+    .table th,
+    .table td {
+      border-bottom: 1px solid var(--demo-border);
+      text-align: left;
+      padding: 12px 10px;
+      font-size: 14px;
+      color: var(--demo-text);
+    }
+    .table th {
+      color: var(--demo-text-soft);
+      font-weight: 600;
+    }
+    .table tr:last-child td {
+      border-bottom: 0;
+    }
+    .footer-note {
+      margin-top: 16px;
+      font-size: 13px;
+      color: var(--text-soft);
+    }
+    @media (max-width: 1020px) {
+      .hero,
+      .layout,
+      .demo-grid {
+        grid-template-columns: 1fr;
+      }
+      .controls {
+        position: static;
+      }
+      .demo-stat {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body data-theme="light">
+  <div class="page">
+    <section class="hero">
+      <div class="hero-main card">
+        <div class="eyebrow">Theme bridge demo · 不侵入 core / preset</div>
+        <h1>把 daisyUI 主题能力封成你自己的组件，是合理的。</h1>
+        <p>这个 demo 模拟了一个 `ThemeSwitcher + DaisyThemeBridge` 的最小产品形态。外部只面对 `light / dark / playful / nature` 这些你自己的语义主题，内部再映射到 daisyUI 主题名。</p>
+      </div>
+      <div class="hero-side card">
+        <div>
+          <h3>这个 demo 想证明什么</h3>
+          <p>不是把 daisyUI 硬塞进核心层，而是把它变成一个可替换的主题提供者。以后即使换掉 daisyUI，外部 API 也不必变。</p>
+        </div>
+        <div class="chips">
+          <span class="chip">ThemeSwitcher</span>
+          <span class="chip">DaisyThemeBridge</span>
+          <span class="chip">localStorage</span>
+          <span class="chip">data-theme</span>
+          <span class="chip">semantic mapping</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="layout">
+      <aside class="controls card">
+        <div class="field">
+          <div class="section-title">1. 业务侧选择自己的语义主题</div>
+          <div class="theme-list" id="semanticThemes"></div>
+        </div>
+
+        <div class="field">
+          <div class="section-title">2. ThemeManager 模式</div>
+          <div class="segmented" id="themeModes">
+            <button data-mode="light">light</button>
+            <button data-mode="dark">dark</button>
+            <button data-mode="system">system</button>
+          </div>
+        </div>
+
+        <div class="status" id="statusBox"></div>
+
+        <div>
+          <div class="section-title">桥接层伪代码</div>
+          <div class="code">themes = {
+  light:   { daisyTheme: "light",   mode: "light" },
+  dark:    { daisyTheme: "night",   mode: "dark" },
+  playful: { daisyTheme: "cupcake", mode: "light" },
+  nature:  { daisyTheme: "emerald", mode: "light" }
+}</div>
+        </div>
+      </aside>
+
+      <main class="card" style="padding:22px;">
+        <div id="demoRoot" class="demo-shell">
+          <div class="demo-bar">
+            <div class="demo-brand">@ouraihub demo shell</div>
+            <div class="demo-nav">
+              <span>Docs</span>
+              <span>Components</span>
+              <span>Playground</span>
+              <span>Pricing</span>
+            </div>
+          </div>
+
+          <div class="demo-grid">
+            <section class="demo-panel">
+              <h2>主题桥接后，页面层只关心视觉结果。</h2>
+              <p>左边切的是你自己的语义主题，内部再映射到 daisyUI 的实际主题名。这样 `@ouraihub` 保留接口主导权，daisyUI 只负责提供主题样板。</p>
+              <div class="demo-actions">
+                <button class="btn btn-primary">Primary action</button>
+                <button class="btn btn-soft">Secondary action</button>
+              </div>
+              <div class="demo-stat">
+                <div class="stat">
+                  <strong id="currentSemanticStat">light</strong>
+                  <span>semantic theme</span>
+                </div>
+                <div class="stat">
+                  <strong id="currentDaisyStat">light</strong>
+                  <span>daisy theme</span>
+                </div>
+                <div class="stat">
+                  <strong id="currentModeStat">light</strong>
+                  <span>theme mode</span>
+                </div>
+              </div>
+            </section>
+
+            <section class="demo-panel">
+              <div class="callout">这块可以想象成 docs / dashboard / landing shell。你不需要让业务页面直接知道 daisyUI 的 `cupcake` 或 `emerald`，只需要暴露你自己的主题语义。</div>
+              <div class="code-preview">const bridge = new DaisyThemeBridge({
+  target: document.documentElement,
+  storageKey: "ouraihub-theme",
+  themes,
+  defaultSemanticTheme: "light"
+})</div>
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>semantic</th>
+                    <th>daisyUI</th>
+                    <th>meaning</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>light</td>
+                    <td>light</td>
+                    <td>default calm UI</td>
+                  </tr>
+                  <tr>
+                    <td>dark</td>
+                    <td>night</td>
+                    <td>developer dark mode</td>
+                  </tr>
+                  <tr>
+                    <td>playful</td>
+                    <td>cupcake</td>
+                    <td>marketing / demo mood</td>
+                  </tr>
+                  <tr>
+                    <td>nature</td>
+                    <td>emerald</td>
+                    <td>soft green product shell</td>
+                  </tr>
+                </tbody>
+              </table>
+            </section>
+          </div>
+        </div>
+
+        <div class="footer-note">
+          建议落点：先放到 `docs` / `prototype` / `playground`。如果后续确实稳定，再抽成 `astro` / `hugo` 的展示层组件，而不是塞进 `core`。
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    class ThemeManager {
+      constructor(element = document.documentElement, options = {}) {
+        this.element = element;
+        this.storageKey = options.storageKey || 'theme-mode';
+        this.attribute = options.attribute || 'data-mode';
+        this.currentTheme = options.defaultTheme || 'system';
+        this.listeners = [];
+        this.mediaQuery = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
+        this.init();
+      }
+
+      init() {
+        const saved = this.loadFromStorage();
+        if (saved) this.currentTheme = saved;
+        this.applyTheme();
+        this.watchSystemTheme();
+      }
+
+      loadFromStorage() {
+        try {
+          const saved = localStorage.getItem(this.storageKey);
+          if (saved === 'light' || saved === 'dark' || saved === 'system') return saved;
+        } catch {}
+        return null;
+      }
+
+      saveToStorage(theme) {
+        try { localStorage.setItem(this.storageKey, theme); } catch {}
+      }
+
+      resolveTheme() {
+        if (this.currentTheme === 'system') {
+          return this.mediaQuery && this.mediaQuery.matches ? 'dark' : 'light';
+        }
+        return this.currentTheme;
+      }
+
+      applyTheme() {
+        this.element.setAttribute(this.attribute, this.resolveTheme());
+      }
+
+      watchSystemTheme() {
+        if (!this.mediaQuery) return;
+        const handler = () => {
+          if (this.currentTheme === 'system') {
+            this.applyTheme();
+            this.notify();
+          }
+        };
+        if (this.mediaQuery.addEventListener) {
+          this.mediaQuery.addEventListener('change', handler);
+        } else if (this.mediaQuery.addListener) {
+          this.mediaQuery.addListener(handler);
+        }
+      }
+
+      setTheme(mode) {
+        this.currentTheme = mode;
+        this.saveToStorage(mode);
+        this.applyTheme();
+        this.notify();
+      }
+
+      getTheme() {
+        return this.currentTheme;
+      }
+
+      onThemeChange(fn) {
+        this.listeners.push(fn);
+      }
+
+      notify() {
+        const resolved = this.resolveTheme();
+        this.listeners.forEach((fn) => fn(resolved, this.currentTheme));
+      }
+    }
+
+    class DaisyThemeBridge {
+      constructor(options) {
+        this.target = options.target || document.documentElement;
+        this.storageKey = options.storageKey || 'ouraihub-semantic-theme';
+        this.defaultSemanticTheme = options.defaultSemanticTheme || 'light';
+        this.themes = options.themes || {};
+        this.currentSemanticTheme = this.load() || this.defaultSemanticTheme;
+      }
+
+      load() {
+        try {
+          return localStorage.getItem(this.storageKey);
+        } catch {
+          return null;
+        }
+      }
+
+      save(value) {
+        try {
+          localStorage.setItem(this.storageKey, value);
+        } catch {}
+      }
+
+      getConfig(name) {
+        return this.themes[name] || this.themes[this.defaultSemanticTheme];
+      }
+
+      setSemanticTheme(name) {
+        const config = this.getConfig(name);
+        this.currentSemanticTheme = name;
+        this.target.setAttribute('data-theme', config.daisyTheme);
+        this.save(name);
+        return config;
+      }
+
+      getSemanticTheme() {
+        return this.currentSemanticTheme;
+      }
+    }
+
+    const semanticThemes = {
+      light: {
+        label: 'light',
+        description: 'calm default UI',
+        daisyTheme: 'light',
+        mode: 'light',
+        swatches: ['#0f6fff', '#eaf3ff', '#11a36a']
+      },
+      dark: {
+        label: 'dark',
+        description: 'developer dark shell',
+        daisyTheme: 'night',
+        mode: 'dark',
+        swatches: ['#72a8ff', '#172131', '#6ee7b7']
+      },
+      playful: {
+        label: 'playful',
+        description: 'demo / marketing mood',
+        daisyTheme: 'cupcake',
+        mode: 'light',
+        swatches: ['#e779c1', '#fff0f9', '#65c3c8']
+      },
+      nature: {
+        label: 'nature',
+        description: 'soft green product shell',
+        daisyTheme: 'emerald',
+        mode: 'light',
+        swatches: ['#66cc8a', '#e9f9ef', '#377cfb']
+      }
+    };
+
+    const bridge = new DaisyThemeBridge({
+      target: document.body,
+      storageKey: 'ouraihub-semantic-theme',
+      themes: semanticThemes,
+      defaultSemanticTheme: 'light'
+    });
+
+    const themeManager = new ThemeManager(document.body, {
+      storageKey: 'ouraihub-theme-mode',
+      attribute: 'data-mode',
+      defaultTheme: 'system'
+    });
+
+    const semanticContainer = document.getElementById('semanticThemes');
+    const modeContainer = document.getElementById('themeModes');
+    const statusBox = document.getElementById('statusBox');
+    const currentSemanticStat = document.getElementById('currentSemanticStat');
+    const currentDaisyStat = document.getElementById('currentDaisyStat');
+    const currentModeStat = document.getElementById('currentModeStat');
+
+    function renderSemanticButtons() {
+      semanticContainer.innerHTML = '';
+      Object.entries(semanticThemes).forEach(([key, config]) => {
+        const button = document.createElement('button');
+        button.className = 'theme-button';
+        button.dataset.theme = key;
+        button.innerHTML = `
+          <span>
+            <strong style="display:block; color:#1c2431; margin-bottom:4px;">${config.label}</strong>
+            <span style="font-size:13px; color:#5c6778;">${config.description}</span>
+          </span>
+          <span class="swatches">
+            ${config.swatches.map((value) => `<span class="swatch" style="background:${value}"></span>`).join('')}
+          </span>
+        `;
+        button.addEventListener('click', () => {
+          bridge.setSemanticTheme(key);
+          if (config.mode) themeManager.setTheme(config.mode);
+          syncUI();
+        });
+        semanticContainer.appendChild(button);
+      });
+    }
+
+    function bindModeButtons() {
+      modeContainer.querySelectorAll('button').forEach((button) => {
+        button.addEventListener('click', () => {
+          themeManager.setTheme(button.dataset.mode);
+          syncUI();
+        });
+      });
+    }
+
+    function syncUI() {
+      const semanticName = bridge.getSemanticTheme();
+      const config = bridge.getConfig(semanticName);
+      const mode = themeManager.getTheme();
+      const resolvedMode = themeManager.resolveTheme();
+
+      semanticContainer.querySelectorAll('button').forEach((button) => {
+        button.classList.toggle('active', button.dataset.theme === semanticName);
+      });
+      modeContainer.querySelectorAll('button').forEach((button) => {
+        button.classList.toggle('active', button.dataset.mode === mode);
+      });
+
+      currentSemanticStat.textContent = semanticName;
+      currentDaisyStat.textContent = config.daisyTheme;
+      currentModeStat.textContent = mode;
+
+      statusBox.innerHTML = `
+        <div><strong>semantic theme:</strong> ${semanticName}</div>
+        <div><strong>mapped daisyUI theme:</strong> ${config.daisyTheme}</div>
+        <div><strong>theme mode:</strong> ${mode} <span style="color:#8a94a3;">(resolved: ${resolvedMode})</span></div>
+        <div style="margin-top:8px;">推荐的组件边界：<code>ThemeSwitcher</code> 暴露语义主题，<code>DaisyThemeBridge</code> 负责内部映射和 <code>data-theme</code> 注入。</div>
+      `;
+    }
+
+    renderSemanticButtons();
+    bindModeButtons();
+    bridge.setSemanticTheme(bridge.getSemanticTheme());
+    syncUI();
+    themeManager.onThemeChange(() => syncUI());
+  </script>
+</body>
+</html>
