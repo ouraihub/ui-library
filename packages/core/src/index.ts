@@ -15,3 +15,6 @@ export * from './code-copy';
 export * from './back-to-top';
 export * from './heading-links';
 export * from './reading-progress';
+export * from './share';
+export * from './embed';
+export * from './i18n';

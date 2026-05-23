@@ -193,3 +193,98 @@ export function syncCommentTheme(provider: string, theme: 'light' | 'dark'): voi
 4. **Phase 4：** hugo 包对齐 astro 包的功能，两个主题共享同一套 core
 
 当前处于 Phase 1，主题功能稳定后再逐步下沉到 ui-library。
+
+---
+
+## Svelte/SvelteKit 支持规划
+
+### 背景
+
+现有 SvelteKit 项目：
+- `nullclaw.io` — NullClaw 运行时文档站
+- `nullhub.io` — NullHub 生态文档站（多产品）
+- 未来 ouraihub 产品站也可能用 SvelteKit
+
+两个现有项目是 copy-paste 的同一套模板（DocSidebar、DocsLayout、TableOfContents、markdown.ts、app.css），需要抽取共享。
+
+### 新增包
+
+```
+@ouraihub/
+├── ... (已有)
+├── svelte          # Svelte 组件包装（对应 astro/hugo 包）
+└── preset-docs-svelte  # SvelteKit 文档站预设模板
+```
+
+### @ouraihub/svelte
+
+**职责：** 用 Svelte 语法包装 core 的功能。
+
+| 组件 | 调用 core | 说明 |
+|------|----------|------|
+| `<ThemeToggle />` | ThemeManager | 主题切换按钮 |
+| `<TableOfContents />` | TOCHighlighter | 目录滚动高亮 |
+| `<CodeCopy />` | CodeCopyManager | 代码复制按钮 |
+| `<BackToTop />` | BackToTop | 返回顶部 |
+| `<ShareLinks />` | ShareManager | 社交分享 |
+| `<Comments />` | CommentManager | 评论系统 |
+| `<Icon />` | @ouraihub/icons | SVG 图标 |
+| `<Search />` | SearchAdapter | 搜索 |
+
+### @ouraihub/preset-docs-svelte
+
+**职责：** SvelteKit 文档站的完整预设模板（从 nullclaw.io/nullhub.io 提取）。
+
+**包含：**
+- `DocsLayout.svelte` — 文档页布局（侧边栏 + 内容 + TOC）
+- `DocSidebar.svelte` — 文档导航侧边栏
+- `markdown.ts` — Markdown 渲染（marked + highlight.js + DOMPurify）
+- `app.css` — 文档站基础样式（多主题 CSS 变量）
+- 路由模板（`/docs/[slug]`）
+
+**使用方式：**
+```bash
+# 新建文档站
+npx degit ouraihub/preset-docs-svelte my-docs
+cd my-docs && pnpm install
+
+# 只需要：
+# 1. 在 src/lib/docs/ 放 Markdown 文件
+# 2. 改 app.css 里的配色
+# 3. pnpm run build
+```
+
+### 从现有项目提取的逻辑
+
+| 现有代码 | 去向 |
+|---------|------|
+| `TableOfContents.svelte` 的 IntersectionObserver | `@ouraihub/core` TOCHighlighter |
+| `markdown.ts` 的 slugify | `@ouraihub/utils` slugify |
+| `app.css` 的 CSS 变量系统 | `@ouraihub/tokens`（映射层） |
+| `DocSidebar` + `DocsLayout` | `@ouraihub/preset-docs-svelte` |
+
+### 实施优先级
+
+| 顺序 | 内容 | 依赖 |
+|------|------|------|
+| 1 | core TOCHighlighter 完成 | Phase 2 Batch 3 |
+| 2 | `@ouraihub/svelte` 基础组件 | core 完成 |
+| 3 | `@ouraihub/preset-docs-svelte` 模板 | svelte 包完成 |
+| 4 | nullclaw.io / nullhub.io 迁移 | 模板完成 |
+
+### 与 Hugo/Astro 的关系
+
+```
+                    @ouraihub/core（纯逻辑）
+                         │
+         ┌───────────────┼───────────────┐
+         ▼               ▼               ▼
+  @ouraihub/hugo   @ouraihub/astro  @ouraihub/svelte
+         │               │               │
+         ▼               ▼               ▼
+  hugo-theme-*     msgflow-site     nullclaw.io
+                                    nullhub.io
+                                    ouraihub 产品站
+```
+
+三个框架包地位平等，都是 core 的薄包装。新增 Svelte 支持不影响已有的 Hugo/Astro 包。
