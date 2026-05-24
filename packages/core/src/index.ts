@@ -22,3 +22,4 @@ export * from './keyboard-shortcuts';
 export * from './toc';
 export * from './search-adapter';
 export * from './comments';
+export * from './terminal-player';

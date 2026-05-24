@@ -9,3 +9,4 @@ export { default as Comments } from './Comments.svelte';
 export { default as Search } from './Search.svelte';
 export { default as KeyboardShortcuts } from './KeyboardShortcuts.svelte';
 export { default as Embed } from './Embed.svelte';
+export { default as TerminalPlayer } from './TerminalPlayer.svelte';
