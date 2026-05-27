@@ -1,6 +1,6 @@
 {
   "name": "@ouraihub/hugo",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Hugo theme components for @ouraihub/ui-library",
   "type": "module",
   "scripts": {
