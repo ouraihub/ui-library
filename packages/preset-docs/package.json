@@ -1,6 +1,6 @@
 {
   "name": "@ouraihub/preset-docs",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Documentation site preset with optimized readability and navigation",
   "type": "module",
   "main": "./dist/cjs/index.cjs",
