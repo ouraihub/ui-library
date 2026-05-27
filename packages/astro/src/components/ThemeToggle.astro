@@ -1,0 +1,29 @@
+---
+export interface Props {
+  storageKey?: string;
+  attribute?: string;
+  class?: string;
+}
+
+const { storageKey = 'theme', attribute = 'data-theme', class: className = '' } = Astro.props;
+---
+
+<button class={`theme-toggle ${className}`} aria-label="Toggle theme" data-theme-toggle>
+  <span class="theme-icon-light">☀️</span>
+  <span class="theme-icon-dark">🌙</span>
+</button>
+
+<script define:vars={{ storageKey, attribute }}>
+  import('@ouraihub/core').then(({ ThemeManager, createLogger }) => {
+    const logger = createLogger({ context: { component: 'ThemeToggle' } });
+    try {
+      const tm = new ThemeManager(document.documentElement, { storageKey, attribute });
+      document.querySelector('[data-theme-toggle]')?.addEventListener('click', () => {
+        tm.toggle();
+        logger.debug('Theme toggled', { theme: tm.getTheme() });
+      });
+    } catch (err) {
+      logger.error('Failed to initialize ThemeManager', { error: String(err) });
+    }
+  });
+</script>

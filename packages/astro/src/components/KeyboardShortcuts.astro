@@ -1,0 +1,47 @@
+---
+import type { Shortcut } from '@ouraihub/core';
+
+export interface Props {
+  shortcuts?: Omit<Shortcut, 'handler'>[];
+}
+
+const { shortcuts = [] } = Astro.props;
+---
+
+<script define:vars={{ shortcuts }}>
+  import('@ouraihub/core').then(({ KeyboardShortcuts, createLogger }) => {
+    const logger = createLogger({ context: { component: 'KeyboardShortcuts' } });
+    const ks = new KeyboardShortcuts();
+
+    // Default shortcuts
+    ks.register({
+      key: '/',
+      handler: () => {
+        const input = document.querySelector('[data-search-input]');
+        if (input instanceof HTMLElement) input.focus();
+      },
+      description: 'Focus search',
+    });
+
+    ks.register({
+      key: 'escape',
+      handler: () => {
+        if (document.activeElement instanceof HTMLElement) {
+          document.activeElement.blur();
+        }
+      },
+      description: 'Unfocus',
+    });
+
+    // User-provided shortcuts (handlers are dispatched as custom events)
+    for (const s of shortcuts) {
+      ks.register({
+        key: s.key,
+        handler: () => document.dispatchEvent(new CustomEvent('shortcut', { detail: s.key })),
+        description: s.description,
+      });
+    }
+
+    logger.debug('Keyboard shortcuts registered', { count: ks.getAll().length });
+  });
+</script>

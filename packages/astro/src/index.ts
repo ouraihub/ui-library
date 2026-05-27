@@ -1,1 +1,11 @@
 export { default as SEO } from './components/SEO.astro';
+export { default as Icon } from './components/Icon.astro';
+export { default as ShareLinks } from './components/ShareLinks.astro';
+export { default as ThemeToggle } from './components/ThemeToggle.astro';
+export { default as CodeCopy } from './components/CodeCopy.astro';
+export { default as BackToTop } from './components/BackToTop.astro';
+export { default as ReadingProgress } from './components/ReadingProgress.astro';
+export { default as TOC } from './components/TOC.astro';
+export { default as Comments } from './components/Comments.astro';
+export { default as Search } from './components/Search.astro';
+export { default as KeyboardShortcuts } from './components/KeyboardShortcuts.astro';

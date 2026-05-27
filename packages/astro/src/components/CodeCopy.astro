@@ -1,0 +1,16 @@
+---
+export interface Props {
+  selector?: string;
+  class?: string;
+}
+
+const { selector = 'pre' } = Astro.props;
+---
+
+<script define:vars={{ selector }}>
+  import('@ouraihub/core').then(({ CodeCopyManager, createLogger }) => {
+    const logger = createLogger({ context: { component: 'CodeCopy' } });
+    new CodeCopyManager({ selector }).init();
+    logger.debug('CodeCopy initialized', { selector });
+  });
+</script>

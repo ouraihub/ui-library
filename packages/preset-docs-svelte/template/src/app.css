@@ -1,0 +1,21 @@
+:root {
+  --primary: #3b82f6;
+  --primary-light: #eff6ff;
+  --text: #1e293b;
+  --text-muted: #64748b;
+  --bg: #ffffff;
+  --surface: #f1f5f9;
+  --border: #e2e8f0;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  line-height: 1.6;
+}
+
+a { color: var(--primary); text-decoration: none; }
+a:hover { text-decoration: underline; }

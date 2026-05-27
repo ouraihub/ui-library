@@ -42,11 +42,23 @@ importers:
         specifier: ^2.0.0
         version: 2.1.9(@types/node@20.19.41)(jsdom@29.1.1)
 
+  packages/ai-chat:
+    devDependencies:
+      svelte:
+        specifier: ^5.0.0
+        version: 5.55.9
+      typescript:
+        specifier: ^5.9.0
+        version: 5.9.3
+
   packages/astro:
     dependencies:
       '@ouraihub/core':
         specifier: workspace:*
         version: link:../core
+      '@ouraihub/icons':
+        specifier: workspace:*
+        version: link:../icons
     devDependencies:
       astro:
         specifier: ^4.0.0
@@ -117,6 +129,8 @@ importers:
       typescript:
         specifier: ^5.9.0
         version: 5.9.3
+
+  packages/preset-docs-svelte: {}
 
   packages/svelte:
     dependencies:

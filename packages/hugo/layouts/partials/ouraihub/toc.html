@@ -1,0 +1,7 @@
+{{/* Table of Contents with active highlighting */}}
+{{/* Usage: {{ partial "ouraihub/toc.html" . }} */}}
+{{ with .TableOfContents }}
+<nav data-controller="toc" class="toc" aria-label="Table of contents">
+  {{ . }}
+</nav>
+{{ end }}

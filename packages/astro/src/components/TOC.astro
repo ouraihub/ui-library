@@ -1,0 +1,27 @@
+---
+export interface Props {
+  headings: { id: string; text: string; depth: number }[];
+  activeClass?: string;
+  class?: string;
+}
+
+const { headings = [], activeClass = 'active', class: className = '' } = Astro.props;
+---
+
+<nav class={`toc ${className}`} data-toc aria-label="Table of contents">
+  <ul>
+    {headings.map((h) => (
+      <li class={`toc-level-${h.depth}`}>
+        <a href={`#${h.id}`}>{h.text}</a>
+      </li>
+    ))}
+  </ul>
+</nav>
+
+<script define:vars={{ activeClass }}>
+  import('@ouraihub/core').then(({ TOCHighlighter, createLogger }) => {
+    const logger = createLogger({ context: { component: 'TOC' } });
+    new TOCHighlighter({ tocSelector: '[data-toc]', activeClass }).init();
+    logger.debug('TOC highlighter initialized');
+  });
+</script>

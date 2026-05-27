@@ -13,6 +13,46 @@
     "./SEO.astro": {
       "types": "./dist/components/SEO.astro.d.ts",
       "default": "./dist/components/SEO.astro"
+    },
+    "./Icon.astro": {
+      "types": "./dist/components/Icon.astro.d.ts",
+      "default": "./dist/components/Icon.astro"
+    },
+    "./ShareLinks.astro": {
+      "types": "./dist/components/ShareLinks.astro.d.ts",
+      "default": "./dist/components/ShareLinks.astro"
+    },
+    "./ThemeToggle.astro": {
+      "types": "./dist/components/ThemeToggle.astro.d.ts",
+      "default": "./dist/components/ThemeToggle.astro"
+    },
+    "./CodeCopy.astro": {
+      "types": "./dist/components/CodeCopy.astro.d.ts",
+      "default": "./dist/components/CodeCopy.astro"
+    },
+    "./BackToTop.astro": {
+      "types": "./dist/components/BackToTop.astro.d.ts",
+      "default": "./dist/components/BackToTop.astro"
+    },
+    "./ReadingProgress.astro": {
+      "types": "./dist/components/ReadingProgress.astro.d.ts",
+      "default": "./dist/components/ReadingProgress.astro"
+    },
+    "./TOC.astro": {
+      "types": "./dist/components/TOC.astro.d.ts",
+      "default": "./dist/components/TOC.astro"
+    },
+    "./Comments.astro": {
+      "types": "./dist/components/Comments.astro.d.ts",
+      "default": "./dist/components/Comments.astro"
+    },
+    "./Search.astro": {
+      "types": "./dist/components/Search.astro.d.ts",
+      "default": "./dist/components/Search.astro"
+    },
+    "./KeyboardShortcuts.astro": {
+      "types": "./dist/components/KeyboardShortcuts.astro.d.ts",
+      "default": "./dist/components/KeyboardShortcuts.astro"
     }
   },
   "files": [
@@ -42,7 +82,8 @@
     "astro": "^4.0.0"
   },
   "dependencies": {
-    "@ouraihub/core": "workspace:*"
+    "@ouraihub/core": "workspace:*",
+    "@ouraihub/icons": "workspace:*"
   },
   "devDependencies": {
     "astro": "^4.0.0",

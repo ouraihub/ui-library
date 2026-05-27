@@ -1,0 +1,8 @@
+{{/* Comments container */}}
+{{/* Usage: {{ partial "ouraihub/comments.html" .Site.Params.comments }} */}}
+{{ $config := . }}
+{{ if $config }}
+<div data-controller="comments">
+  <script type="application/json">{{ $config | jsonify }}</script>
+</div>
+{{ end }}

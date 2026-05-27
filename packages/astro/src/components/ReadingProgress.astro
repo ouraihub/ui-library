@@ -1,0 +1,29 @@
+---
+export interface Props {
+  contentSelector?: string;
+  class?: string;
+}
+
+const { contentSelector = 'article', class: className = '' } = Astro.props;
+---
+
+<div class={`reading-progress ${className}`} data-reading-progress>
+  <div class="reading-progress-bar" data-reading-progress-bar style="width: 0%"></div>
+</div>
+
+<script define:vars={{ contentSelector }}>
+  import('@ouraihub/core').then(({ ReadingProgress, createLogger }) => {
+    const logger = createLogger({ context: { component: 'ReadingProgress' } });
+    const bar = document.querySelector('[data-reading-progress-bar]');
+
+    if (bar) {
+      new ReadingProgress({
+        contentSelector,
+        onProgress: (percent) => { bar.style.width = `${percent * 100}%`; },
+      }).init();
+      logger.debug('ReadingProgress initialized');
+    } else {
+      logger.warn('ReadingProgress bar element not found');
+    }
+  });
+</script>

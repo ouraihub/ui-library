@@ -1,0 +1,49 @@
+---
+import type { SearchOptions } from '@ouraihub/core';
+
+export interface Props {
+  options?: SearchOptions;
+  placeholder?: string;
+  class?: string;
+}
+
+const { options = { provider: 'pagefind' }, placeholder = 'Search...', class: className = '' } = Astro.props;
+---
+
+<div class={`search ${className}`} data-search>
+  <input type="search" placeholder={placeholder} data-search-input aria-label="Search" />
+  <ul data-search-results role="listbox" aria-label="Search results"></ul>
+</div>
+
+<script define:vars={{ options }}>
+  import('@ouraihub/core').then(({ SearchAdapter, createLogger }) => {
+    const logger = createLogger({ context: { component: 'Search' } });
+    const adapter = new SearchAdapter(options);
+    const input = document.querySelector('[data-search-input]');
+    const results = document.querySelector('[data-search-results]');
+
+    if (!input || !results) return;
+
+    adapter.init().then((ok) => {
+      if (!ok) logger.warn('SearchAdapter init returned false');
+    });
+
+    let timer = 0;
+    input.addEventListener('input', (e) => {
+      clearTimeout(timer);
+      timer = window.setTimeout(async () => {
+        const query = (e.target instanceof HTMLInputElement) ? e.target.value : '';
+        if (!query.trim()) { results.innerHTML = ''; return; }
+        try {
+          const items = await adapter.search(query);
+          results.innerHTML = items.map((r) => {
+            const title = r.title.replace(/</g, '&lt;');
+            return `<li role="option"><a href="${encodeURI(r.url)}"><strong>${title}</strong><p>${r.excerpt}</p></a></li>`;
+          }).join('');
+        } catch (err) {
+          logger.error('Search failed', { error: String(err) });
+        }
+      }, 200);
+    });
+  });
+</script>

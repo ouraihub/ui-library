@@ -1,0 +1,27 @@
+---
+export interface Props {
+  threshold?: number;
+  class?: string;
+}
+
+const { threshold = 0.3, class: className = '' } = Astro.props;
+---
+
+<button class={`back-to-top hidden ${className}`} aria-label="Back to top" data-back-to-top>↑</button>
+
+<script define:vars={{ threshold }}>
+  import('@ouraihub/core').then(({ BackToTop, createLogger }) => {
+    const logger = createLogger({ context: { component: 'BackToTop' } });
+    const btn = document.querySelector('[data-back-to-top]');
+    if (!btn) { logger.warn('BackToTop button element not found'); return; }
+
+    const btt = new BackToTop({
+      threshold,
+      onShow: () => btn.classList.remove('hidden'),
+      onHide: () => btn.classList.add('hidden'),
+    });
+    btt.init();
+    btn.addEventListener('click', () => btt.scrollToTop());
+    logger.debug('BackToTop initialized', { threshold });
+  });
+</script>

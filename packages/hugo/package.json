@@ -9,7 +9,7 @@
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:debug": "playwright test --debug"
   },
-  "peerDependencies": {
+  "dependencies": {
     "@ouraihub/core": "workspace:*"
   },
   "devDependencies": {
@@ -17,6 +17,7 @@
   },
   "files": [
     "layouts",
+    "assets",
     "static"
   ],
   "keywords": [
