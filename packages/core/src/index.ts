@@ -23,3 +23,4 @@ export * from './toc';
 export * from './search-adapter';
 export * from './comments';
 export * from './terminal-player';
+export * from './logger';
