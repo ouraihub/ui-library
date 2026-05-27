@@ -65,10 +65,14 @@ packages/hugo-shared/
 ```json
 {
   "dependencies": {
-    "@ouraihub/hugo-shared": "workspace:*"
+    "@ouraihub/hugo-shared": "^0.1.0"
   }
 }
 ```
+
+> hugo-shared 通过 npm 发布（和 @ouraihub/core、@ouraihub/tokens 同样的模式）。
+> 开发时在 ui-library 中修改，`pnpm changeset publish` 发布新版本。
+> 主题通过 `pnpm update @ouraihub/hugo-shared` 同步更新。
 
 ### 2. 构建脚本
 
@@ -356,25 +360,28 @@ cp hugo-theme-paper/assets/css/chroma-light.css packages/hugo-shared/css/
 cp hugo-theme-paper/assets/css/chroma-dark.css packages/hugo-shared/css/
 ```
 
-### 步骤 7: paper 加依赖和构建脚本
+### 步骤 7: 发布 hugo-shared 到 npm + paper 加依赖
 
-在 `hugo-theme-paper/package.json` 中：
-
-加依赖：
-```json
-"dependencies": {
-  "@ouraihub/hugo-shared": "workspace:*"
-}
+先在 ui-library 中发布：
+```bash
+cd packages/hugo-shared
+npm publish --access public
 ```
 
-加脚本：
+然后在 paper 中安装：
+```bash
+cd hugo-theme-paper
+pnpm add @ouraihub/hugo-shared
+```
+
+在 `hugo-theme-paper/package.json` 的 scripts 中加：
 ```json
 "sync:shared": "rm -rf layouts/partials/shared && cp -r node_modules/@ouraihub/hugo-shared/partials layouts/partials/shared && cp -r node_modules/@ouraihub/hugo-shared/css assets/css/shared",
 "predev": "pnpm sync:shared",
 "prebuild": "pnpm sync:shared"
 ```
 
-运行 `pnpm install` 让 workspace 链接生效。
+运行 `pnpm install` 确认安装成功。
 
 ### 步骤 8: paper 改 partial 引用路径
 
@@ -526,6 +533,7 @@ Tailwind v4 配置：
 
 - ❌ 不统一视觉样式
 - ❌ 不处理主题特有功能
-- ❌ 不发布到 npm（workspace 内部）
+- ❌ 不用 workspace 引用（主题是独立仓库，通过 npm 安装）
 - ❌ 不用 Hugo Modules（项目不用 go.mod）
 - ❌ 不用 symlink（不可靠）
+- ❌ 不把主题放进 ui-library（主题是成品，库是库）
