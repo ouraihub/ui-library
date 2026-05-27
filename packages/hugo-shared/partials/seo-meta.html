@@ -1,14 +1,20 @@
 {{- /* SEO Meta Tags - Single source of truth for all meta/OG/Twitter tags */ -}}
 
+{{- /* Fallback-aware variables */ -}}
+{{- $author := .Params.author | default .Site.Params.seo.author | default .Site.Params.author.name | default .Site.Params.author | default "" -}}
+{{- $description := .Description | default .Summary | default .Site.Params.seo.description | default .Site.Params.description | default "" -}}
+{{- $ogImage := .Params.image | default .Params.cover | default .Site.Params.seo.ogImage | default .Site.Params.og_image | default "" -}}
+{{- $twitterCard := .Site.Params.seo.twitter.card | default "summary_large_image" -}}
+{{- $twitterSite := .Site.Params.seo.twitter.site | default .Site.Params.seo.twitterUsername | default "" -}}
+
 {{- /* Basic */ -}}
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<meta name="description" content="{{ .Description | default .Site.Params.description }}" />
+<meta name="description" content="{{ $description }}" />
 <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
 <meta name="generator" content="Hugo {{ hugo.Version }}" />
 
 {{- /* Author */ -}}
-{{- $author := .Params.author | default .Site.Params.seo.author -}}
 {{- with $author }}
 <meta name="author" content="{{ . }}" />
 {{- end }}
@@ -23,11 +29,13 @@
 {{- /* Open Graph */ -}}
 <meta property="og:type" content="{{ if .IsPage }}article{{ else }}website{{ end }}" />
 <meta property="og:title" content="{{ .Title | default .Site.Title }}" />
-<meta property="og:description" content="{{ .Description | default .Site.Params.description }}" />
+<meta property="og:description" content="{{ $description }}" />
 <meta property="og:url" content="{{ .Permalink }}" />
 <meta property="og:site_name" content="{{ .Site.Title }}" />
 <meta property="og:locale" content="{{ .Site.Language.Lang }}" />
-{{- partial "head/og-image.html" . -}}
+{{- with $ogImage }}
+<meta property="og:image" content="{{ . | absURL }}" />
+{{- end }}
 
 {{- /* Article-specific OG */ -}}
 {{- if .IsPage }}
@@ -42,9 +50,15 @@
 {{- end }}
 
 {{- /* Twitter */ -}}
-<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:card" content="{{ $twitterCard }}" />
 <meta name="twitter:title" content="{{ .Title | default .Site.Title }}" />
-<meta name="twitter:description" content="{{ .Description | default .Site.Params.description }}" />
+<meta name="twitter:description" content="{{ $description }}" />
+{{- with $twitterSite }}
+<meta name="twitter:site" content="{{ . }}" />
+{{- end }}
+{{- with $ogImage }}
+<meta name="twitter:image" content="{{ . | absURL }}" />
+{{- end }}
 
 {{- /* DNS Prefetch (only for actually used domains) */ -}}
 <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
