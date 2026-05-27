@@ -8,7 +8,10 @@
 
 ```bash
 # 1. 安装依赖
-pnpm add @ouraihub/hugo-shared@file:../../ui-dev/ui-library/packages/hugo-shared
+# 开发时用 file: 协议（本地联调）
+pnpm add @ouraihub/hugo-shared@file:../ui-dev/ui-library/packages/hugo-shared
+# 发布后改为 npm 版本（CI 和其他开发者用）
+# pnpm add @ouraihub/hugo-shared@^0.1.0
 
 # 2. 加构建脚本（package.json scripts）
 "sync:shared": "rm -rf layouts/partials/shared && cp -r node_modules/@ouraihub/hugo-shared/partials layouts/partials/shared && rm -rf assets/css/shared && cp -r node_modules/@ouraihub/hugo-shared/css assets/css/shared",
@@ -25,6 +28,35 @@ assets/css/shared/
 # 5. 验证
 pnpm dev
 ```
+
+### CI 部署注意事项
+
+`file:` 协议在 CI 环境不可用（路径不存在）。两种解决方案：
+
+**方案 A：发布到 npm 后用版本号（推荐）**
+```json
+"@ouraihub/hugo-shared": "^0.1.0"
+```
+
+**方案 B：CI 中 clone ui-library 手动复制（未发布时）**
+```yaml
+- name: Install dependencies
+  run: |
+    node -e "const p=require('./package.json'); delete p.dependencies['@ouraihub/hugo-shared']; require('fs').writeFileSync('package.json', JSON.stringify(p, null, 2))"
+    pnpm install --ignore-scripts
+
+- name: Sync shared modules
+  run: |
+    git clone --depth 1 https://github.com/ouraihub/ui-library.git /tmp/ui-library
+    rm -rf layouts/partials/shared && cp -r /tmp/ui-library/packages/hugo-shared/partials layouts/partials/shared
+    rm -rf assets/css/shared && cp -r /tmp/ui-library/packages/hugo-shared/css assets/css/shared
+    mkdir -p node_modules/@ouraihub/hugo-shared
+    cp -r /tmp/ui-library/packages/hugo-shared/* node_modules/@ouraihub/hugo-shared/
+```
+
+### Go Module 缓存注意事项
+
+> ⚠️ **不要重复使用同一个 tag。** Go module proxy 会缓存 tag 对应的内容。如果 dist 仓库内容有变，必须用新版本号（如 v0.8.1 → v0.8.2），否则 `hugo mod get -u` 拉到的还是旧内容。
 
 ---
 
@@ -318,16 +350,12 @@ import { ThemeManager, BackToTop } from '@ouraihub/hugo-shared';
 ```ts
 import { ThemeManager } from '@ouraihub/hugo-shared';
 
-const tm = new ThemeManager({
-  storageKey: 'theme',
-  attribute: 'data-theme',
-});
-
-tm.apply();
+// 构造即生效（防闪烁）
+const tm = new ThemeManager();
 
 window.addEventListener('load', () => {
-  const btn = document.querySelector('[data-aw-toggle-color-scheme]');
-  btn?.addEventListener('click', () => tm.toggle());
+  document.querySelector('[data-aw-toggle-color-scheme]')
+    ?.addEventListener('click', () => tm.toggle());
 });
 ```
 
@@ -349,12 +377,8 @@ window.addEventListener('load', () => {
 ```ts
 import { ThemeManager } from '@ouraihub/hugo-shared';
 
-const tm = new ThemeManager({
-  storageKey: 'theme',
-  attribute: 'data-theme',
-});
-
-tm.apply();
+// 构造即生效（防闪烁）
+const tm = new ThemeManager();
 
 document.getElementById('color-toggle-btn')?.addEventListener('click', () => {
   tm.toggle();
@@ -363,7 +387,7 @@ document.getElementById('color-toggle-btn')?.addEventListener('click', () => {
 
 删除 `main.ts` 中原有的 `import ... from './color-schema'` 和相关调用。
 
-**注意：** 原 storageKey 是 `'Fluid_Color_Scheme'`，改为 `'theme'` 后老用户的偏好会重置一次。
+**注意：** 原 storageKey 是 `'Fluid_Color_Scheme'`，改为 `'theme'` 后老用户的偏好会重置一次。如需兼容可传 `{ storageKey: 'Fluid_Color_Scheme' }`。
 
 ---
 
@@ -387,18 +411,34 @@ butterfly 的 `layouts/partials/head/seo.html` 第 116-185 行包含 schema JSON
 shared 导出的 `ThemeManager` class 接口：
 
 ```ts
-interface ThemeManagerOptions {
+interface ThemeManagerConfig {
   storageKey?: string;    // 默认 'theme'
   attribute?: string;     // 默认 'data-theme'
+  element?: HTMLElement;  // 默认 document.documentElement
 }
 
 class ThemeManager {
-  constructor(options?: ThemeManagerOptions);
-  apply(): void;          // 立即应用主题（防闪烁，在 head 中调用）
-  toggle(): void;         // 切换 light ↔ dark
-  getTheme(): string;     // 获取当前主题 'light' | 'dark' | 'system'
-  getResolved(): string;  // 获取解析后的主题 'light' | 'dark'
+  constructor(config?: ThemeManagerConfig);
+  // 构造时自动 apply（防闪烁），无需手动调用
+  get resolved(): 'light' | 'dark';  // 当前解析后的主题
+  get mode(): ThemeMode;             // 当前模式 'light' | 'dark' | 'system'
+  toggle(): void;                    // 切换 light ↔ dark
+  setTheme(mode: ThemeMode): void;   // 设置指定模式
 }
 ```
 
-各主题只需要 `new ThemeManager(options)` + `tm.apply()` + 按钮绑定 `tm.toggle()`。
+各主题用法：
+```ts
+import { ThemeManager } from '@ouraihub/hugo-shared';
+
+// 构造即生效（同步执行，防 FOUC）
+const tm = new ThemeManager();
+
+// 按钮绑定
+window.addEventListener('load', () => {
+  document.querySelector('#theme-btn')
+    ?.addEventListener('click', () => tm.toggle());
+});
+```
+
+> ⚠️ ThemeManager 必须在 `<head>` 中同步加载（不能 defer），否则会闪烁。
