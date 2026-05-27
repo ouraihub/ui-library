@@ -244,8 +244,8 @@ Hugo 主题通过 npm 安装 core，然后用 Hugo 的 js.Build 管道打包：
 
 ```bash
 # 在 hugo 主题目录
-npm init -y
-npm install @ouraihub/core
+pnpm init
+pnpm add @ouraihub/core
 ```
 
 ```
