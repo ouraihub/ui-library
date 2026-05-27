@@ -267,25 +267,138 @@ import { ThemeManager, BackToTop } from '@ouraihub/hugo-shared';
 
 | 顺序 | 主题 | 难度 | 原因 |
 |------|------|------|------|
-| 1 | hugowind | 低 | 架构最好，TS 模块化，改动最少 |
-| 2 | hugo-butterfly | 中 | params 已兼容，但文件多 |
-| 3 | hugo-theme-fluid | 高 | DOM 属性要改 + params 结构差异大 |
+| 0 | **shared 包加 fallback** | 低 | 必须先做，否则其他主题 params 读不到值 |
+| 1 | hugowind | 低 | 架构最好，改动最少 |
+| 2 | hugo-butterfly | 中 | params 已兼容，但要删 schema 重复 |
+| 3 | hugo-theme-fluid | 高 | DOM 属性 + params 结构差异大 |
 
 ---
 
-## shared/seo-meta.html 兼容性增强
+## 步骤 0：先改 shared 包加 fallback 兼容
 
-为了让四个主题都能用同一个 seo-meta.html，需要在 partial 中加 fallback 逻辑：
+在 `packages/hugo-shared/partials/seo-meta.html` 中，确保变量读取有 fallback：
 
 ```html
-{{- /* Author: 兼容多种 params 路径 */ -}}
-{{- $author := .Site.Params.seo.author | default .Site.Params.author.name | default .Site.Params.author | default .Site.Author.name -}}
-
-{{- /* OG Image: 兼容多种 params 路径 */ -}}
-{{- $ogImage := .Params.image | default .Params.cover | default .Site.Params.seo.ogImage | default .Site.Params.og_image -}}
-
-{{- /* Twitter: 兼容多种 params 路径 */ -}}
-{{- $twitterCard := .Site.Params.seo.twitter.card | default .Site.Params.metadata.twitter.cardType | default "summary_large_image" -}}
+{{- $author := .Site.Params.seo.author | default .Site.Params.author.name | default .Site.Params.author | default "" -}}
+{{- $ogImage := .Params.image | default .Params.cover | default .Site.Params.seo.ogImage | default .Site.Params.og_image | default "" -}}
+{{- $twitterCard := .Site.Params.seo.twitter.card | default "summary_large_image" -}}
+{{- $twitterSite := .Site.Params.seo.twitter.site | default .Site.Params.seo.twitterUsername | default "" -}}
+{{- $description := .Description | default .Summary | default .Site.Params.seo.description | default .Site.Params.description | default "" -}}
 ```
 
-这样各主题迁移时不需要立即改 params 结构，可以渐进式迁移。
+提交到 shared 包后再开始集成各主题。
+
+---
+
+## DOM 属性迁移详细指南
+
+### hugowind：`.dark` class → `data-theme`
+
+**CSS 改动（`assets/css/main.css`）— 全局替换：**
+
+```
+查找: @custom-variant dark (&:where(.dark, .dark *));
+替换: @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+查找: .dark {
+替换: [data-theme="dark"] {
+
+查找: .dark .
+替换: [data-theme="dark"] .
+```
+
+**CSS 改动（`assets/css/syntax.css`）：**
+```
+查找: .dark :not(pre) > code
+替换: [data-theme="dark"] :not(pre) > code
+```
+
+**TS 改动 — 删除 `assets/ts/toggle-theme.ts` 和 `assets/ts/modules/theme.ts`，新建 `assets/ts/toggle-theme.ts`：**
+
+```ts
+import { ThemeManager } from '@ouraihub/hugo-shared';
+
+const tm = new ThemeManager({
+  storageKey: 'theme',
+  attribute: 'data-theme',
+});
+
+tm.apply();
+
+window.addEventListener('load', () => {
+  const btn = document.querySelector('[data-aw-toggle-color-scheme]');
+  btn?.addEventListener('click', () => tm.toggle());
+});
+```
+
+---
+
+### fluid：`data-user-color-scheme` → `data-theme`
+
+**CSS 改动（`assets/css/main.css`）— 全局替换：**
+
+```
+查找: data-user-color-scheme
+替换: data-theme
+```
+
+这会影响约 8 处（第 91、132、169、3182、3183、3187、4037 行等）。替换后确认格式正确：`[data-theme='dark']` 或 `[data-theme="dark"]`（两种引号都行）。
+
+**TS 改动 — 删除 `assets/ts/color-schema.ts`，在 `assets/ts/main.ts` 顶部加：**
+
+```ts
+import { ThemeManager } from '@ouraihub/hugo-shared';
+
+const tm = new ThemeManager({
+  storageKey: 'theme',
+  attribute: 'data-theme',
+});
+
+tm.apply();
+
+document.getElementById('color-toggle-btn')?.addEventListener('click', () => {
+  tm.toggle();
+});
+```
+
+删除 `main.ts` 中原有的 `import ... from './color-schema'` 和相关调用。
+
+**注意：** 原 storageKey 是 `'Fluid_Color_Scheme'`，改为 `'theme'` 后老用户的偏好会重置一次。
+
+---
+
+## butterfly schema 重复问题
+
+butterfly 的 `layouts/partials/head/seo.html` 第 116-185 行包含 schema JSON-LD（Article + Breadcrumb）。
+
+**集成时必须删除整个 `head/seo.html` 文件**，然后在 `baseof.html` 的 `<head>` 中加：
+
+```html
+{{ partial "shared/seo-meta.html" . }}
+{{ partial "shared/schema.html" . }}
+```
+
+**不能保留 seo.html 的部分内容**——shared 的两个 partial 已经完整覆盖了 SEO meta + schema 的所有功能。
+
+---
+
+## ThemeManager 接口说明
+
+shared 导出的 `ThemeManager` class 接口：
+
+```ts
+interface ThemeManagerOptions {
+  storageKey?: string;    // 默认 'theme'
+  attribute?: string;     // 默认 'data-theme'
+}
+
+class ThemeManager {
+  constructor(options?: ThemeManagerOptions);
+  apply(): void;          // 立即应用主题（防闪烁，在 head 中调用）
+  toggle(): void;         // 切换 light ↔ dark
+  getTheme(): string;     // 获取当前主题 'light' | 'dark' | 'system'
+  getResolved(): string;  // 获取解析后的主题 'light' | 'dark'
+}
+```
+
+各主题只需要 `new ThemeManager(options)` + `tm.apply()` + 按钮绑定 `tm.toggle()`。
