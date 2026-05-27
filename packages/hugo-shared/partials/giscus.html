@@ -1,0 +1,54 @@
+{{- /*
+  Giscus Comments Component
+  
+  Config (params.toml):
+    [params.comments]
+    enable = true
+    provider = "giscus"
+    
+    [params.comments.giscus]
+    repo = "your-username/your-repo"
+    repoId = "R_..."
+    category = "General"
+    categoryId = "DIC_..."
+    mapping = "pathname"
+    strict = "0"
+    reactionsEnabled = "1"
+    emitMetadata = "0"
+    inputPosition = "bottom"
+    lang = "en"
+*/ -}}
+
+{{ if and .Site.Params.comments.enable (eq .Site.Params.comments.provider "giscus") }}
+<div class="giscus-wrapper mt-12 pt-8 border-t border-border">
+  <h3 class="text-2xl font-bold mb-6">Comments</h3>
+
+  <script src="https://giscus.app/client.js"
+        data-repo="{{ .Site.Params.comments.giscus.repo }}"
+        data-repo-id="{{ .Site.Params.comments.giscus.repoId }}"
+        data-category="{{ .Site.Params.comments.giscus.category }}"
+        data-category-id="{{ .Site.Params.comments.giscus.categoryId }}"
+        data-mapping="{{ .Site.Params.comments.giscus.mapping | default "pathname" }}"
+        data-strict="{{ .Site.Params.comments.giscus.strict | default "0" }}"
+        data-reactions-enabled="{{ .Site.Params.comments.giscus.reactionsEnabled | default "1" }}"
+        data-emit-metadata="{{ .Site.Params.comments.giscus.emitMetadata | default "0" }}"
+        data-input-position="{{ .Site.Params.comments.giscus.inputPosition | default "bottom" }}"
+        data-theme="{{ if (eq .Site.Params.theme.defaultTheme "dark") }}dark{{ else }}light{{ end }}"
+        data-lang="{{ .Site.Language.Lang | default "en" }}"
+        crossorigin="anonymous"
+        async>
+  </script>
+
+  <script>
+    const giscusTheme = () => {
+      const theme = document.documentElement.getAttribute('data-theme');
+      const giscusFrame = document.querySelector('iframe.giscus-frame');
+      if (giscusFrame) {
+        giscusFrame.parentElement.classList.toggle('dark-mode', theme === 'dark');
+      }
+    };
+    const observer = new MutationObserver(giscusTheme);
+    observer.observe(document.documentElement, { attributes: true });
+  </script>
+</div>
+{{ end }}

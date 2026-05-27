@@ -1,0 +1,65 @@
+{{- /*
+  Pagination Component
+  参考: astro-paper/src/components/Pagination.astro
+  
+  显示分页导航
+*/ -}}
+
+{{- if gt .Paginator.TotalPages 1 }}
+<nav class="mt-auto mb-8 flex justify-center" aria-label="Pagination">
+  {{- /* Previous Button */ -}}
+  <a
+    href="{{ if .Paginator.HasPrev }}{{ .Paginator.Prev.URL }}{{ else }}#{{ end }}"
+    class="me-4 select-none inline-flex items-center gap-1 rounded-lg border border-border px-4 py-2 hover:bg-muted hover:text-accent transition-colors{{ if not .Paginator.HasPrev }} opacity-50 pointer-events-none{{ end }}"
+    aria-label="Previous"
+    {{ if not .Paginator.HasPrev }}aria-disabled="true"{{ end }}
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      class="inline-block rtl:rotate-180"
+    >
+      <line x1="19" y1="12" x2="5" y2="12"></line>
+      <polyline points="12 19 5 12 12 5"></polyline>
+    </svg>
+    Prev
+  </a>
+  
+  {{- /* Page Numbers */ -}}
+  <span class="flex items-center px-4">
+    {{ .Paginator.PageNumber }} / {{ .Paginator.TotalPages }}
+  </span>
+  
+  {{- /* Next Button */ -}}
+  <a
+    href="{{ if .Paginator.HasNext }}{{ .Paginator.Next.URL }}{{ else }}#{{ end }}"
+    class="ms-4 select-none inline-flex items-center gap-1 rounded-lg border border-border px-4 py-2 hover:bg-muted hover:text-accent transition-colors{{ if not .Paginator.HasNext }} opacity-50 pointer-events-none{{ end }}"
+    aria-label="Next"
+    {{ if not .Paginator.HasNext }}aria-disabled="true"{{ end }}
+  >
+    Next
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      class="inline-block rtl:rotate-180"
+    >
+      <line x1="5" y1="12" x2="19" y2="12"></line>
+      <polyline points="12 5 19 12 12 19"></polyline>
+    </svg>
+  </a>
+</nav>
+{{- end }}

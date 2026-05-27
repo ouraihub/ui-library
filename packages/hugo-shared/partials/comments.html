@@ -1,0 +1,23 @@
+<!-- Comments Section - Giscus Integration -->
+<!--
+使用说明:
+1. 访问 https://giscus.app 配置你的GitHub仓库
+2. 在params.toml中设置以下配置:
+   [params.comments]
+   enable = true
+   provider = "giscus"
+   repo = "your-username/your-repo"
+   repoId = "R_..."
+   category = "General"
+   categoryId = "DIC_..."
+   mapping = "pathname"
+   strict = "0"
+   reactionsEnabled = "1"
+   emitMetadata = "0"
+   inputPosition = "bottom"
+   theme = "light"
+   lang = "en"
+-->
+
+{{ if and .Site.Params.comments.enable (eq .Site.Params.comments.provider
+"giscus") }} {{ partial "shared/giscus.html" . }} {{ end }}
