@@ -270,18 +270,243 @@ paper 接入 shared 后需要改的文件：
 
 ## 执行步骤（给大模型的）
 
+### 步骤 1: 创建 packages/hugo-shared
+
+```bash
+mkdir -p packages/hugo-shared/{partials,ts,css,i18n}
 ```
-步骤 1: 在 ui-library 中创建 packages/hugo-shared 目录和 package.json
-步骤 2: 从 paper 复制 TS 模块到 packages/hugo-shared/ts/
-步骤 3: 创建 ts/index.ts 统一导出
-步骤 4: 从 paper 复制 8 个 partials 到 packages/hugo-shared/partials/
-步骤 5: 调整 partials 中的 params 路径为统一接口
-步骤 6: 从 paper 复制 chroma CSS 到 packages/hugo-shared/css/
-步骤 7: 在 paper 中加 @ouraihub/hugo-shared 依赖和 sync:shared 脚本
-步骤 8: paper 的 baseof/single 改为引用 shared/ 前缀的 partials
-步骤 9: paper 删除本地重复文件
-步骤 10: paper 的 main.ts 改为 import from '@ouraihub/hugo-shared'
-步骤 11: pnpm dev 验证功能不变
+
+创建 `packages/hugo-shared/package.json`：
+```json
+{
+  "name": "@ouraihub/hugo-shared",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./ts/index.ts",
+  "exports": {
+    ".": "./ts/index.ts",
+    "./partials/*": "./partials/*",
+    "./css/*": "./css/*",
+    "./i18n/*": "./i18n/*"
+  }
+}
+```
+
+在 `pnpm-workspace.yaml` 中确认 `packages/*` 已包含。
+
+### 步骤 2: 从 paper 复制 TS 模块
+
+```bash
+cp hugo-theme-paper/assets/ts/modules/back-to-top.ts packages/hugo-shared/ts/
+cp hugo-theme-paper/assets/ts/modules/code-copy.ts packages/hugo-shared/ts/
+cp hugo-theme-paper/assets/ts/modules/heading-links.ts packages/hugo-shared/ts/
+cp hugo-theme-paper/assets/ts/modules/reading-progress.ts packages/hugo-shared/ts/
+cp hugo-theme-paper/assets/ts/modules/logger.ts packages/hugo-shared/ts/
+```
+
+从 `hugo-theme-paper/assets/ts/toggle-theme.ts` 提取 ThemeManager class 到 `packages/hugo-shared/ts/theme-manager.ts`（去掉 DOM 绑定部分，只保留纯逻辑 class）。
+
+### 步骤 3: 创建 ts/index.ts
+
+```ts
+export { BackToTop } from './back-to-top';
+export { CodeCopyManager } from './code-copy';
+export { initHeadingLinks } from './heading-links';
+export { ReadingProgress } from './reading-progress';
+export { createLogger } from './logger';
+export { ThemeManager } from './theme-manager';
+```
+
+### 步骤 4: 从 paper 复制 partials
+
+```bash
+cp hugo-theme-paper/layouts/partials/seo-meta.html packages/hugo-shared/partials/
+cp hugo-theme-paper/layouts/partials/schema.html packages/hugo-shared/partials/
+cp hugo-theme-paper/layouts/partials/comments.html packages/hugo-shared/partials/
+cp hugo-theme-paper/layouts/partials/giscus.html packages/hugo-shared/partials/
+cp hugo-theme-paper/layouts/partials/share-links.html packages/hugo-shared/partials/
+cp hugo-theme-paper/layouts/partials/pagination.html packages/hugo-shared/partials/
+cp hugo-theme-paper/layouts/partials/back-to-top.html packages/hugo-shared/partials/
+cp hugo-theme-paper/layouts/partials/language-switcher.html packages/hugo-shared/partials/
+cp hugo-theme-paper/layouts/partials/theme-toggle.html packages/hugo-shared/partials/
+```
+
+### 步骤 5: 调整 partials 中的 params 路径
+
+只有 `giscus.html` 需要改。在 `packages/hugo-shared/partials/giscus.html` 中做以下替换：
+
+| 查找 | 替换为 |
+|------|--------|
+| `.Site.Params.comments.repo` | `.Site.Params.comments.giscus.repo` |
+| `.Site.Params.comments.repoId` | `.Site.Params.comments.giscus.repoId` |
+| `.Site.Params.comments.category` | `.Site.Params.comments.giscus.category` |
+| `.Site.Params.comments.categoryId` | `.Site.Params.comments.giscus.categoryId` |
+| `.Site.Params.comments.mapping` | `.Site.Params.comments.giscus.mapping` |
+| `.Site.Params.comments.strict` | `.Site.Params.comments.giscus.strict` |
+| `.Site.Params.comments.reactionsEnabled` | `.Site.Params.comments.giscus.reactionsEnabled` |
+| `.Site.Params.comments.emitMetadata` | `.Site.Params.comments.giscus.emitMetadata` |
+| `.Site.Params.comments.inputPosition` | `.Site.Params.comments.giscus.inputPosition` |
+
+其他 partials（seo-meta、schema、share-links 等）不需要改 params 路径。
+
+### 步骤 6: 复制 CSS
+
+```bash
+cp hugo-theme-paper/assets/css/chroma-light.css packages/hugo-shared/css/
+cp hugo-theme-paper/assets/css/chroma-dark.css packages/hugo-shared/css/
+```
+
+### 步骤 7: paper 加依赖和构建脚本
+
+在 `hugo-theme-paper/package.json` 中：
+
+加依赖：
+```json
+"dependencies": {
+  "@ouraihub/hugo-shared": "workspace:*"
+}
+```
+
+加脚本：
+```json
+"sync:shared": "rm -rf layouts/partials/shared && cp -r node_modules/@ouraihub/hugo-shared/partials layouts/partials/shared && cp -r node_modules/@ouraihub/hugo-shared/css assets/css/shared",
+"predev": "pnpm sync:shared",
+"prebuild": "pnpm sync:shared"
+```
+
+运行 `pnpm install` 让 workspace 链接生效。
+
+### 步骤 8: paper 改 partial 引用路径
+
+需要改的文件和具体改动：
+
+**`layouts/_default/baseof.html`：**
+```
+{{ partial "seo-meta.html" . }}  →  {{ partial "shared/seo-meta.html" . }}
+{{ partial "schema.html" . }}    →  {{ partial "shared/schema.html" . }}
+```
+
+**`layouts/_default/single.html`：**
+```
+{{ partial "share-links.html" . }}  →  {{ partial "shared/share-links.html" . }}
+{{ partial "back-to-top.html" . }}  →  {{ partial "shared/back-to-top.html" . }}
+```
+
+**`layouts/partials/header.html`：**
+```
+{{ partial "language-switcher.html" . }}  →  {{ partial "shared/language-switcher.html" . }}
+```
+
+**`layouts/partials/comments.html`：**
+这个文件本身移到了 shared，但它内部引用了 giscus：
+```
+{{ partial "giscus.html" . }}  →  {{ partial "shared/giscus.html" . }}
+```
+
+**`layouts/_default/list.html`、`layouts/tag/term.html`、`layouts/category/list.html`：**
+```
+{{ partial "pagination.html" . }}  →  {{ partial "shared/pagination.html" . }}
+```
+
+### 步骤 9: paper 删除本地重复文件
+
+```bash
+cd hugo-theme-paper
+rm layouts/partials/seo-meta.html
+rm layouts/partials/schema.html
+rm layouts/partials/comments.html
+rm layouts/partials/giscus.html
+rm layouts/partials/share-links.html
+rm layouts/partials/pagination.html
+rm layouts/partials/back-to-top.html
+rm layouts/partials/language-switcher.html
+rm layouts/partials/theme-toggle.html
+```
+
+### 步骤 10: paper 的 main.ts 改 import
+
+当前 `assets/ts/main.ts`：
+```ts
+import {
+  CodeCopyManager,
+  BackToTop,
+  ReadingProgress,
+  initHeadingLinks,
+  createLogger,
+} from './modules';
+```
+
+改为：
+```ts
+import {
+  CodeCopyManager,
+  BackToTop,
+  ReadingProgress,
+  initHeadingLinks,
+  createLogger,
+} from '@ouraihub/hugo-shared';
+```
+
+然后删除 `assets/ts/modules/` 目录（已移到 shared）。
+
+保留 `assets/ts/nav.ts`（主题特有逻辑，不共享）。
+
+### 步骤 11: 验证
+
+```bash
+pnpm dev
+```
+
+访问 http://localhost:1313 检查：
+- [ ] 首页正常渲染
+- [ ] 文章页代码高亮正常（亮/暗切换）
+- [ ] 代码复制按钮工作
+- [ ] 返回顶部按钮工作
+- [ ] 主题切换正常（无闪烁）
+- [ ] 语言切换正常
+- [ ] 分享链接显示
+- [ ] 查看源码：`og:title` 只出现 1 次
+- [ ] 查看源码：有 BreadcrumbList schema
+
+### 步骤 12: 更新 paper 的 hugo.toml
+
+comments 的 params 结构调整：
+
+**改前：**
+```toml
+[params.comments]
+  enable = false
+  provider = "giscus"
+  repo = ""
+  repoId = ""
+  category = ""
+  categoryId = ""
+```
+
+**改后：**
+```toml
+[params.comments]
+  enable = false
+  provider = "giscus"
+  lazyload = true
+
+  [params.comments.giscus]
+    repo = ""
+    repoId = ""
+    category = ""
+    categoryId = ""
+    mapping = "pathname"
+    lang = "en"
+    themeLight = "light"
+    themeDark = "dark"
+```
+
+### 步骤 13: paper 的 .gitignore
+
+追加：
+```
+layouts/partials/shared/
+assets/css/shared/
 ```
 
 ---
