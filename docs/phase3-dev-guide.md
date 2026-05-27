@@ -233,3 +233,68 @@ packages/preset-docs-svelte/
 - [ ] hugo 包：6 个新 partial 实现，参考主题能正常渲染
 - [ ] preset-docs-svelte：`cd template && pnpm dev` 能启动，页面正常显示
 - [ ] 无循环依赖
+
+---
+
+## 补充说明
+
+### Hugo 包如何引入 @ouraihub/core
+
+Hugo 主题通过 npm 安装 core，然后用 Hugo 的 js.Build 管道打包：
+
+```bash
+# 在 hugo 主题目录
+npm init -y
+npm install @ouraihub/core
+```
+
+```
+# 目录结构
+packages/hugo/
+├── assets/ts/ouraihub.ts    # 入口，import from @ouraihub/core
+├── layouts/partials/ouraihub/  # HTML partials
+├── package.json             # 依赖 @ouraihub/core
+└── static/                  # 如果需要静态资源
+```
+
+Hugo 模板中引入打包后的 JS：
+
+```html
+{{/* layouts/partials/ouraihub/assets.html - 在 <head> 或 </body> 前调用 */}}
+{{ with resources.Get "ts/ouraihub.ts" }}
+  {{ $js := . | js.Build (dict "targetPath" "js/ouraihub.min.js" "minify" true) }}
+  <script src="{{ $js.RelPermalink }}" defer></script>
+{{ end }}
+```
+
+主题使用方在 `config.toml` 里 mount 这个模块：
+
+```toml
+[module]
+  [[module.imports]]
+    path = "github.com/ouraihub/ui-library/packages/hugo"
+```
+
+### preset-docs-svelte 现有组件参考
+
+新窗口开发时需要读以下文件了解现有实现：
+
+```
+~/workspace/open-source/ouraihub-docs/packages/shared/components/DocsLayout.svelte
+~/workspace/open-source/ouraihub-docs/packages/shared/components/DocSidebar.svelte
+~/workspace/open-source/ouraihub-docs/packages/shared/components/TableOfContents.svelte
+~/workspace/open-source/ouraihub-docs/packages/shared/components/AiChat.svelte
+~/workspace/open-source/ouraihub-docs/packages/shared/markdown.ts
+```
+
+这些文件是 Phase 3 preset-docs-svelte 的基础，直接复制过来再重构为模板包。
+
+### 新窗口启动指令
+
+```
+读 ~/workspace/open-source/ui-dev/ui-library/docs/phase3-dev-guide.md，
+参考 packages/svelte/src/ 的实现模式，完成 Phase 3 开发。
+astro 包参考现有 packages/astro/src/components/SEO.astro。
+hugo 包参考现有 packages/hugo/layouts/partials/。
+preset-docs-svelte 参考 ~/workspace/open-source/ouraihub-docs/packages/shared/。
+```
