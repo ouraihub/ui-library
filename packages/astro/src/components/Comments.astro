@@ -1,0 +1,26 @@
+---
+import type { CommentConfig } from '@ouraihub/core';
+
+export interface Props extends CommentConfig {
+  class?: string;
+}
+
+const { class: className = '', ...config } = Astro.props;
+---
+
+<div class={className} data-comments></div>
+
+<script define:vars={{ config }}>
+  import('@ouraihub/core').then(({ CommentManager, createLogger }) => {
+    const logger = createLogger({ context: { component: 'Comments' } });
+    const el = document.querySelector('[data-comments]');
+    if (!el) { logger.warn('Comments container not found'); return; }
+
+    try {
+      new CommentManager(config).mount(el);
+      logger.debug('Comments mounted', { provider: config.provider });
+    } catch (err) {
+      logger.error('Failed to mount comments', { error: String(err), provider: config.provider });
+    }
+  });
+</script>

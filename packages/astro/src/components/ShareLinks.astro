@@ -1,0 +1,22 @@
+---
+import type { SharePlatform } from '@ouraihub/core';
+import { getShareLinks } from '@ouraihub/core';
+
+export interface Props {
+  url: string;
+  title: string;
+  platforms?: SharePlatform[];
+  class?: string;
+}
+
+const { url, title, platforms, class: className = '' } = Astro.props;
+const links = getShareLinks(url, title, platforms);
+---
+
+<div class={`share-links ${className}`}>
+  {links.map((link) => (
+    <a href={link.href} target="_blank" rel="noopener noreferrer" aria-label={`Share on ${link.name}`}>
+      {link.name}
+    </a>
+  ))}
+</div>

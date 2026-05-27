@@ -1,0 +1,16 @@
+{
+  "name": "@ouraihub/preset-docs-svelte",
+  "version": "0.1.0",
+  "description": "SvelteKit documentation site template - use with degit",
+  "type": "module",
+  "files": ["template"],
+  "keywords": ["svelte", "sveltekit", "docs", "template"],
+  "author": "OurAI Hub",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ouraihub/ui-library.git",
+    "directory": "packages/preset-docs-svelte"
+  },
+  "publishConfig": { "access": "public" }
+}

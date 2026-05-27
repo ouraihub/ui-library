@@ -1,0 +1,8 @@
+{{/* Back to top button */}}
+{{/* Usage: {{ partial "ouraihub/back-to-top.html" . }} */}}
+<button
+  data-controller="back-to-top"
+  data-back-to-top-threshold="{{ default 0.3 .Site.Params.backToTopThreshold }}"
+  class="hidden fixed bottom-8 right-8 p-3 rounded-full shadow-lg"
+  aria-label="Back to top"
+>↑</button>
