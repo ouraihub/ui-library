@@ -1,6 +1,6 @@
 {
   "name": "@ouraihub/preset-blog",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "博客场景的预设配置，提供优化的阅读体验和常用组件配置",
   "type": "module",
   "main": "./dist/index.js",

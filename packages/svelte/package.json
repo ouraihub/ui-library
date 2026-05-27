@@ -1,6 +1,6 @@
 {
   "name": "@ouraihub/svelte",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Svelte 5 components wrapping @ouraihub/core",
   "type": "module",
   "svelte": "./src/index.ts",
@@ -8,7 +8,9 @@
   "exports": {
     ".": "./src/index.ts"
   },
-  "files": ["src"],
+  "files": [
+    "src"
+  ],
   "scripts": {
     "check": "svelte-check --tsconfig ./tsconfig.json"
   },
@@ -24,8 +26,14 @@
     "svelte-check": "^4.0.0",
     "typescript": "^5.9.0"
   },
-  "keywords": ["svelte", "components", "ui"],
+  "keywords": [
+    "svelte",
+    "components",
+    "ui"
+  ],
   "author": "OurAI Hub",
   "license": "MIT",
-  "publishConfig": { "access": "public" }
+  "publishConfig": {
+    "access": "public"
+  }
 }
