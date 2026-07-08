@@ -47,6 +47,8 @@ export interface LLMCompletionOptions {
   readonly jsonMode?: boolean;
   /** Tools available for this completion */
   readonly tools?: readonly LLMTool[];
+  /** Enable streaming (internal use, set by stream/streamMessages) */
+  readonly stream?: boolean;
 }
 
 /** Raw completion result (before schema validation) */
@@ -67,10 +69,11 @@ export interface LLMUsage {
 /**
  * LLM Provider — core interface.
  *
- * Three completion modes:
+ * Four completion modes:
  * - `complete<T>()` — structured output with Zod schema validation
  * - `raw()` — raw completion without schema enforcement
  * - `messages()` — native multi-turn conversation (for tool call loops)
+ * - `stream()` — streaming completion yielding chunks as they arrive
  */
 export interface ILLMProvider {
   /** Structured completion: prompt → validated T */
@@ -81,6 +84,35 @@ export interface ILLMProvider {
 
   /** Multi-turn completion: full message history → result (for tool call loops) */
   messages(messages: readonly LLMMessage[], options?: LLMCompletionOptions): Promise<LLMCompletionResult>;
+
+  /** Streaming completion: yields text chunks as they arrive */
+  stream(prompt: LLMPrompt, options?: LLMCompletionOptions): AsyncIterable<StreamChunk>;
+
+  /** Streaming with full message history */
+  streamMessages(messages: readonly LLMMessage[], options?: LLMCompletionOptions): AsyncIterable<StreamChunk>;
+}
+
+// ─── Streaming Types ─────────────────────────────────────────────────────────
+
+/** A single chunk from a streaming response */
+export interface StreamChunk {
+  /** Text delta (empty string if no text in this chunk) */
+  readonly text: string;
+  /** Tool call delta (present when model starts/continues a tool call) */
+  readonly toolCall?: StreamToolCallDelta;
+  /** Set to true on the final chunk */
+  readonly done: boolean;
+  /** Finish reason (only on final chunk) */
+  readonly finishReason?: string;
+  /** Accumulated usage (only on final chunk, if provider supports it) */
+  readonly usage?: LLMUsage;
+}
+
+/** Incremental tool call info from a stream */
+export interface StreamToolCallDelta {
+  readonly id?: string;
+  readonly name?: string;
+  readonly argumentsDelta: string;
 }
 
 // ─── Tool Executor (for MCP support) ─────────────────────────────────────────

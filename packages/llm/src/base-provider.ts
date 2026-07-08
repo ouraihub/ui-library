@@ -22,6 +22,7 @@ import type {
   LLMCompletionOptions,
   LLMCompletionResult,
   LLMProviderConfig,
+  StreamChunk,
 } from './interfaces.js';
 import type { ILogger } from './logger.js';
 import { noopLogger } from './logger.js';
@@ -83,6 +84,76 @@ export abstract class BaseLLMProvider implements ILLMProvider {
     return this.executeRequest(url, init);
   }
 
+  /** Streaming completion: yields text chunks */
+  async *stream(prompt: LLMPrompt, options?: LLMCompletionOptions): AsyncIterable<StreamChunk> {
+    const { url, init } = this.buildRequest(prompt, { ...options, stream: true });
+    yield* this.executeStream(url, init);
+  }
+
+  /** Streaming with full message history */
+  async *streamMessages(messages: readonly LLMMessage[], options?: LLMCompletionOptions): AsyncIterable<StreamChunk> {
+    const { url, init } = this.buildMessagesRequest(messages, { ...options, stream: true });
+    yield* this.executeStream(url, init);
+  }
+
+  private async *executeStream(url: string, init: RequestInit): AsyncIterable<StreamChunk> {
+    const start = Date.now();
+
+    this.logger.info('llm_stream_start', { vendor: this.vendor, model: this.model });
+
+    const response = await this.fetchWithTimeout(url, init);
+
+    if (!response.ok) {
+      const body = await safeReadText(response);
+      this.logger.error('llm_stream_failed', { vendor: this.vendor, status: response.status });
+      throw new LLMError(`${this.vendor} stream returned ${response.status}: ${body.slice(0, 200)}`, this.vendor, response.status);
+    }
+
+    if (!response.body) {
+      throw new LLMError(`${this.vendor} stream response has no body`, this.vendor);
+    }
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop() ?? '';
+
+        for (const line of lines) {
+          const chunk = this.parseStreamLine(line);
+          if (chunk) yield chunk;
+          if (chunk?.done) {
+            this.logger.info('llm_stream_done', {
+              vendor: this.vendor,
+              duration: Date.now() - start,
+              finishReason: chunk.finishReason,
+            });
+            return;
+          }
+        }
+      }
+
+      // Process remaining buffer
+      if (buffer.trim()) {
+        const chunk = this.parseStreamLine(buffer);
+        if (chunk) yield chunk;
+      }
+    } finally {
+      reader.releaseLock();
+    }
+
+    // Emit final done chunk if not already emitted
+    yield { text: '', done: true };
+    this.logger.info('llm_stream_done', { vendor: this.vendor, duration: Date.now() - start });
+  }
+
   private async executeRequest(url: string, init: RequestInit): Promise<LLMCompletionResult> {
     const start = Date.now();
 
@@ -139,6 +210,8 @@ export abstract class BaseLLMProvider implements ILLMProvider {
   protected abstract buildRequest(prompt: LLMPrompt, options?: LLMCompletionOptions): { url: string; init: RequestInit };
   protected abstract buildMessagesRequest(messages: readonly LLMMessage[], options?: LLMCompletionOptions): { url: string; init: RequestInit };
   protected abstract parseResponse(payload: unknown): LLMCompletionResult;
+  /** Parse a single SSE line into a StreamChunk (return null to skip) */
+  protected abstract parseStreamLine(line: string): StreamChunk | null;
   protected abstract getDefaultBaseUrl(): string;
   protected abstract getDefaultModel(): string;
   protected abstract getVendorName(): string;

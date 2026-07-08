@@ -91,6 +91,9 @@ export type {
   LLMUsage,
   LLMProviderConfig,
   CreateProviderOptions,
+  // Streaming
+  StreamChunk,
+  StreamToolCallDelta,
   // Tools
   IToolExecutor,
   LLMTool,

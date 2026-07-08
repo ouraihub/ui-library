@@ -7,7 +7,7 @@
  *  - Tool calling (function calling format)
  */
 
-import type { LLMPrompt, LLMMessage, LLMCompletionOptions, LLMCompletionResult, LLMToolCall } from './interfaces.js';
+import type { LLMPrompt, LLMMessage, LLMCompletionOptions, LLMCompletionResult, LLMToolCall, StreamChunk } from './interfaces.js';
 import { BaseLLMProvider, type BaseLLMProviderConfig } from './base-provider.js';
 import type { LLMProviderConfig } from './interfaces.js';
 
@@ -84,6 +84,10 @@ export class OpenAIProvider extends BaseLLMProvider {
       }));
     }
 
+    if (options?.stream) {
+      body.stream = true;
+    }
+
     return {
       url,
       init: {
@@ -126,9 +130,70 @@ export class OpenAIProvider extends BaseLLMProvider {
         : undefined,
     };
   }
+
+  protected parseStreamLine(line: string): StreamChunk | null {
+    // OpenAI SSE format: "data: {...}" or "data: [DONE]"
+    if (!line.startsWith('data: ')) return null;
+    const data = line.slice(6).trim();
+    if (data === '[DONE]') return { text: '', done: true };
+
+    try {
+      const json = JSON.parse(data) as OpenAIStreamChunk;
+      const choice = json.choices?.[0];
+      if (!choice) return null;
+
+      const delta = choice.delta;
+      const text = delta?.content ?? '';
+      const finishReason = choice.finish_reason ?? undefined;
+      const done = finishReason === 'stop' || finishReason === 'tool_calls';
+
+      // Tool call delta
+      let toolCall: StreamChunk['toolCall'];
+      if (delta?.tool_calls?.[0]) {
+        const tc = delta.tool_calls[0];
+        toolCall = {
+          id: tc.id,
+          name: tc.function?.name,
+          argumentsDelta: tc.function?.arguments ?? '',
+        };
+      }
+
+      return {
+        text,
+        toolCall,
+        done,
+        finishReason: done ? finishReason : undefined,
+        usage: json.usage ? {
+          promptTokens: json.usage.prompt_tokens,
+          completionTokens: json.usage.completion_tokens,
+          totalTokens: json.usage.total_tokens,
+        } : undefined,
+      };
+    } catch {
+      return null;
+    }
+  }
 }
 
 // ─── Response type (minimal, tolerant) ───────────────────────────────────────
+
+interface OpenAIStreamChunk {
+  choices?: Array<{
+    delta?: {
+      content?: string;
+      tool_calls?: Array<{
+        id?: string;
+        function?: { name?: string; arguments?: string };
+      }>;
+    };
+    finish_reason?: string | null;
+  }>;
+  usage?: {
+    prompt_tokens?: number;
+    completion_tokens?: number;
+    total_tokens?: number;
+  };
+}
 
 interface OpenAIResponse {
   choices?: Array<{

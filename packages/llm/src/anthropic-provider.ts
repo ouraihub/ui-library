@@ -5,7 +5,7 @@
  * Tool calling uses Anthropic's tool_use content blocks.
  */
 
-import type { LLMPrompt, LLMMessage, LLMCompletionOptions, LLMCompletionResult, LLMToolCall } from './interfaces.js';
+import type { LLMPrompt, LLMMessage, LLMCompletionOptions, LLMCompletionResult, LLMToolCall, StreamChunk } from './interfaces.js';
 import { BaseLLMProvider, type BaseLLMProviderConfig } from './base-provider.js';
 import type { LLMProviderConfig } from './interfaces.js';
 
@@ -76,6 +76,10 @@ export class AnthropicProvider extends BaseLLMProvider {
       }));
     }
 
+    if (options?.stream) {
+      body.stream = true;
+    }
+
     return {
       url,
       init: {
@@ -121,9 +125,68 @@ export class AnthropicProvider extends BaseLLMProvider {
         : undefined,
     };
   }
+
+  protected parseStreamLine(line: string): StreamChunk | null {
+    // Anthropic SSE format: "event: ..." then "data: {...}"
+    if (!line.startsWith('data: ')) return null;
+    const data = line.slice(6).trim();
+    if (!data) return null;
+
+    try {
+      const json = JSON.parse(data) as AnthropicStreamEvent;
+
+      switch (json.type) {
+        case 'content_block_delta': {
+          const delta = json.delta;
+          if (delta?.type === 'text_delta') {
+            return { text: delta.text ?? '', done: false };
+          }
+          if (delta?.type === 'input_json_delta') {
+            return { text: '', toolCall: { argumentsDelta: delta.partial_json ?? '' }, done: false };
+          }
+          return null;
+        }
+        case 'content_block_start': {
+          if (json.content_block?.type === 'tool_use') {
+            return {
+              text: '',
+              toolCall: { id: json.content_block.id, name: json.content_block.name, argumentsDelta: '' },
+              done: false,
+            };
+          }
+          return null;
+        }
+        case 'message_delta': {
+          return {
+            text: '',
+            done: json.delta?.stop_reason === 'end_turn' || json.delta?.stop_reason === 'tool_use',
+            finishReason: json.delta?.stop_reason ?? undefined,
+            usage: json.usage ? {
+              promptTokens: json.usage.input_tokens,
+              completionTokens: json.usage.output_tokens,
+              totalTokens: (json.usage.input_tokens ?? 0) + (json.usage.output_tokens ?? 0),
+            } : undefined,
+          };
+        }
+        case 'message_stop':
+          return { text: '', done: true };
+        default:
+          return null;
+      }
+    } catch {
+      return null;
+    }
+  }
 }
 
 // ─── Response type ───────────────────────────────────────────────────────────
+
+interface AnthropicStreamEvent {
+  type: string;
+  delta?: { type?: string; text?: string; partial_json?: string; stop_reason?: string };
+  content_block?: { type?: string; id?: string; name?: string };
+  usage?: { input_tokens?: number; output_tokens?: number };
+}
 
 interface AnthropicResponse {
   content?: Array<{
