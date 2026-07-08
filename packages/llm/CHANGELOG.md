@@ -1,5 +1,11 @@
 # @ouraihub/llm
 
+## 0.2.1
+
+### Patch Changes
+
+- 9f3a2ff: fix(llm): reasoning model compatibility — temperature opt-in, jsonMode auto-fallback, custom headers
+
 ## 0.2.0
 
 ### Minor Changes
