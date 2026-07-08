@@ -71,6 +71,10 @@ export { SkillLoader } from './skill-loader.js';
 
 export { LLMError, LLMTimeoutError, LLMSchemaError } from './errors.js';
 
+// ─── Logger ──────────────────────────────────────────────────────────────────
+
+export { noopLogger, consoleLogger } from './logger.js';
+
 // ─── Utilities ───────────────────────────────────────────────────────────────
 
 export { extractJsonObject } from './base-provider.js';

@@ -8,19 +8,21 @@
  */
 
 import type { LLMPrompt, LLMCompletionOptions, LLMCompletionResult, LLMToolCall } from './interfaces.js';
-import { BaseLLMProvider } from './base-provider.js';
+import { BaseLLMProvider, type BaseLLMProviderConfig } from './base-provider.js';
 import type { LLMProviderConfig } from './interfaces.js';
 
 const DEFAULT_TEMPERATURE = 0.7;
 
 export class OpenAIProvider extends BaseLLMProvider {
-  constructor(config: Pick<LLMProviderConfig, 'apiKey'> & Partial<LLMProviderConfig>) {
+  constructor(config: Pick<LLMProviderConfig, 'apiKey'> & Partial<BaseLLMProviderConfig>) {
     super({
       apiKey: config.apiKey,
       baseUrl: config.baseUrl,
       model: config.model,
       timeoutMs: config.timeoutMs,
       vendor: config.vendor ?? 'openai',
+      logger: config.logger,
+      maxRetries: config.maxRetries,
     });
   }
 

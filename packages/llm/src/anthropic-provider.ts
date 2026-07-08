@@ -6,19 +6,21 @@
  */
 
 import type { LLMPrompt, LLMCompletionOptions, LLMCompletionResult, LLMToolCall } from './interfaces.js';
-import { BaseLLMProvider } from './base-provider.js';
+import { BaseLLMProvider, type BaseLLMProviderConfig } from './base-provider.js';
 import type { LLMProviderConfig } from './interfaces.js';
 
 const DEFAULT_MAX_TOKENS = 4096;
 
 export class AnthropicProvider extends BaseLLMProvider {
-  constructor(config: Pick<LLMProviderConfig, 'apiKey'> & Partial<LLMProviderConfig>) {
+  constructor(config: Pick<LLMProviderConfig, 'apiKey'> & Partial<BaseLLMProviderConfig>) {
     super({
       apiKey: config.apiKey,
       baseUrl: config.baseUrl,
       model: config.model,
       timeoutMs: config.timeoutMs,
       vendor: config.vendor ?? 'anthropic',
+      logger: config.logger,
+      maxRetries: config.maxRetries,
     });
   }
 
