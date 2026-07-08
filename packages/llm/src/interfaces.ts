@@ -162,6 +162,8 @@ export interface LLMProviderConfig {
   readonly timeoutMs?: number;
   /** Vendor identifier for logging */
   readonly vendor?: string;
+  /** Custom headers to include in every request */
+  readonly headers?: Readonly<Record<string, string>>;
 }
 
 /** Factory options */

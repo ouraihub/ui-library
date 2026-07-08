@@ -55,6 +55,7 @@ export abstract class BaseLLMProvider implements ILLMProvider {
   protected readonly timeoutMs: number;
   protected readonly logger: ILogger;
   protected readonly maxRetries: number;
+  protected readonly customHeaders: Readonly<Record<string, string>>;
 
   protected constructor(config: Required<Pick<LLMProviderConfig, 'apiKey'>> & BaseLLMProviderConfig) {
     this.apiKey = config.apiKey;
@@ -64,12 +65,27 @@ export abstract class BaseLLMProvider implements ILLMProvider {
     this.timeoutMs = config.timeoutMs ?? DEFAULT_TIMEOUT_MS;
     this.logger = config.logger ?? noopLogger;
     this.maxRetries = config.maxRetries ?? DEFAULT_MAX_RETRIES;
+    this.customHeaders = config.headers ?? {};
   }
 
   /** Structured completion with Zod schema validation */
   async complete<T>(prompt: LLMPrompt, schema: z.ZodSchema<T>, options?: LLMCompletionOptions): Promise<T> {
-    const result = await this.raw(prompt, { ...options, jsonMode: true });
-    return this.parseAndValidate(result.content, schema);
+    try {
+      const result = await this.raw(prompt, { ...options, jsonMode: true });
+      return this.parseAndValidate(result.content, schema);
+    } catch (err) {
+      // If jsonMode/temperature caused a 400, retry without them (reasoning model compatibility)
+      if (err instanceof LLMError && err.statusCode === 400) {
+        this.logger.warn('llm_jsonmode_fallback', { vendor: this.vendor, model: this.model });
+        const fallbackPrompt = {
+          system: (prompt.system ?? '') + '\n\nIMPORTANT: You MUST respond with valid JSON only. No markdown fences, no explanation.',
+          user: prompt.user,
+        };
+        const result = await this.raw(fallbackPrompt, { ...options, jsonMode: false });
+        return this.parseAndValidate(result.content, schema);
+      }
+      throw err;
+    }
   }
 
   /** Raw completion without schema enforcement */

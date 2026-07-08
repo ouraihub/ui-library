@@ -11,7 +11,7 @@ import type { LLMPrompt, LLMMessage, LLMCompletionOptions, LLMCompletionResult, 
 import { BaseLLMProvider, type BaseLLMProviderConfig } from './base-provider.js';
 import type { LLMProviderConfig } from './interfaces.js';
 
-const DEFAULT_TEMPERATURE = 0.7;
+// OpenAI-compatible provider constants removed — temperature is now opt-in
 
 export class OpenAIProvider extends BaseLLMProvider {
   constructor(config: Pick<LLMProviderConfig, 'apiKey'> & Partial<BaseLLMProviderConfig>) {
@@ -62,8 +62,12 @@ export class OpenAIProvider extends BaseLLMProvider {
     const body: Record<string, unknown> = {
       model: this.model,
       messages,
-      temperature: options?.temperature ?? DEFAULT_TEMPERATURE,
     };
+
+    // Only send temperature when explicitly set (reasoning models don't support it)
+    if (options?.temperature !== undefined) {
+      body.temperature = options.temperature;
+    }
 
     if (options?.maxTokens) {
       body.max_tokens = options.maxTokens;
@@ -95,6 +99,7 @@ export class OpenAIProvider extends BaseLLMProvider {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${this.apiKey}`,
+          ...this.customHeaders,
         },
         body: JSON.stringify(body),
       },
