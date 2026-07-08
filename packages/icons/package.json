@@ -10,15 +10,22 @@
     "./social": "./src/social.ts",
     "./ui": "./src/ui.ts"
   },
-  "files": ["src"],
+  "files": [
+    "src"
+  ],
   "scripts": {
     "typecheck": "tsc --noEmit"
   },
-  "keywords": ["icons", "svg"],
+  "keywords": [
+    "icons",
+    "svg"
+  ],
   "author": "OurAI Hub",
   "license": "MIT",
-  "publishConfig": { "access": "public" },
+  "publishConfig": {
+    "access": "public"
+  },
   "devDependencies": {
-    "typescript": "^5.9.0"
+    "typescript": "^6.0.3"
   }
 }

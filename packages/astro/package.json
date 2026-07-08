@@ -86,7 +86,7 @@
     "@ouraihub/icons": "workspace:*"
   },
   "devDependencies": {
-    "astro": "^4.0.0",
-    "typescript": "^5.3.3"
+    "astro": "^7.0.6",
+    "typescript": "^6.0.3"
   }
 }

@@ -8,16 +8,26 @@
   "exports": {
     ".": "./src/index.ts"
   },
-  "files": ["src"],
+  "files": [
+    "src"
+  ],
   "peerDependencies": {
     "svelte": "^5.0.0"
   },
   "devDependencies": {
-    "svelte": "^5.0.0",
-    "typescript": "^5.9.0"
+    "svelte": "^5.56.4",
+    "typescript": "^6.0.3"
   },
-  "keywords": ["svelte", "ai", "chat", "sse", "streaming"],
+  "keywords": [
+    "svelte",
+    "ai",
+    "chat",
+    "sse",
+    "streaming"
+  ],
   "author": "OurAI Hub",
   "license": "MIT",
-  "publishConfig": { "access": "public" }
+  "publishConfig": {
+    "access": "public"
+  }
 }

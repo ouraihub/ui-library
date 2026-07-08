@@ -13,7 +13,9 @@
       "require": "./dist/cjs/index.cjs"
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "node build.js && tsc --emitDeclarationOnly",
     "dev": "node build.js --watch",
@@ -22,7 +24,14 @@
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist"
   },
-  "keywords": ["llm", "openai", "anthropic", "ai", "structured-output", "cloudflare-workers"],
+  "keywords": [
+    "llm",
+    "openai",
+    "anthropic",
+    "ai",
+    "structured-output",
+    "cloudflare-workers"
+  ],
   "author": "OurAI Hub",
   "license": "MIT",
   "repository": {
@@ -30,14 +39,16 @@
     "url": "https://github.com/ouraihub/ui-library.git",
     "directory": "packages/llm"
   },
-  "publishConfig": { "access": "public" },
+  "publishConfig": {
+    "access": "public"
+  },
   "peerDependencies": {
     "zod": "^3.22.0"
   },
   "devDependencies": {
-    "esbuild": "^0.28.0",
-    "vitest": "^2.1.9",
-    "typescript": "^5.9.0",
-    "zod": "^3.23.0"
+    "esbuild": "^0.28.1",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.10",
+    "zod": "^4.4.3"
   }
 }

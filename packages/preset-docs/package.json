@@ -55,8 +55,8 @@
   "author": "@ouraihub",
   "license": "MIT",
   "devDependencies": {
-    "esbuild": "^0.28.0",
-    "typescript": "^5.9.0"
+    "esbuild": "^0.28.1",
+    "typescript": "^6.0.3"
   },
   "publishConfig": {
     "access": "public"
