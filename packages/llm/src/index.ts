@@ -1,16 +1,31 @@
 /**
  * @ouraihub/llm — Package entry point.
  *
- * Usage:
- *   import { createProvider, ToolExecutor } from '@ouraihub/llm';
+ * A complete LLM abstraction with:
+ * - Multi-provider support (OpenAI-compatible + Anthropic)
+ * - Structured output (Zod schema validation)
+ * - Tool calling / MCP support
+ * - Skill system (SKILL.md → system prompt)
  *
- *   const llm = createProvider({ apiKey: '...', baseUrl: '...', model: '...' });
+ * Usage:
+ *   import { createProvider, ToolExecutor, SkillLoader, MCPClient } from '@ouraihub/llm';
+ *
+ *   // Basic structured output
+ *   const llm = createProvider({ apiKey, baseUrl, model });
  *   const result = await llm.complete(prompt, schema);
  *
- *   // With tools (MCP)
+ *   // With skills
+ *   const skills = new SkillLoader();
+ *   skills.add('my-skill', skillContent);
+ *   const prompt = skills.buildPrompt('user question');
+ *   await llm.complete(prompt, schema);
+ *
+ *   // With MCP tools
+ *   const mcp = new MCPClient();
+ *   await mcp.connect({ url: 'http://localhost:3000/mcp' });
  *   const executor = new ToolExecutor();
- *   executor.register([{ definition: {...}, handler: async (args) => '...' }]);
- *   const result = await executor.completeWithTools(llm, prompt, schema);
+ *   executor.register(mcp.getToolRegistrations());
+ *   await executor.completeWithTools(llm, prompt, schema);
  */
 
 import type { ILLMProvider, CreateProviderOptions } from './interfaces.js';
@@ -38,26 +53,55 @@ export function createProvider(options: CreateProviderOptions): ILLMProvider {
   }
 }
 
-// ─── Re-exports ──────────────────────────────────────────────────────────────
+// ─── Provider exports ────────────────────────────────────────────────────────
 
 export { OpenAIProvider } from './openai-provider.js';
 export { AnthropicProvider } from './anthropic-provider.js';
+
+// ─── Tool system (MCP) ───────────────────────────────────────────────────────
+
 export { ToolExecutor } from './tool-executor.js';
+export { MCPClient } from './mcp-client.js';
+
+// ─── Skill system ────────────────────────────────────────────────────────────
+
+export { SkillLoader } from './skill-loader.js';
+
+// ─── Errors ──────────────────────────────────────────────────────────────────
+
 export { LLMError, LLMTimeoutError, LLMSchemaError } from './errors.js';
+
+// ─── Utilities ───────────────────────────────────────────────────────────────
+
 export { extractJsonObject } from './base-provider.js';
 
+// ─── Type exports ────────────────────────────────────────────────────────────
+
 export type {
+  // Core
   ILLMProvider,
-  IToolExecutor,
   LLMPrompt,
   LLMMessage,
-  LLMTool,
-  LLMToolCall,
   LLMCompletionOptions,
   LLMCompletionResult,
   LLMUsage,
   LLMProviderConfig,
   CreateProviderOptions,
+  // Tools
+  IToolExecutor,
+  LLMTool,
+  LLMToolCall,
   ToolHandler,
   ToolRegistration,
 } from './interfaces.js';
+
+export type {
+  SkillEntry,
+  SkillPromptOptions,
+} from './skill-loader.js';
+
+export type {
+  MCPToolDefinition,
+  MCPToolResult,
+  MCPServerConfig,
+} from './mcp-client.js';
