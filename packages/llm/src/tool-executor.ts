@@ -19,6 +19,7 @@ import type {
   ILLMProvider,
   IToolExecutor,
   LLMPrompt,
+  LLMMessage,
   LLMTool,
   LLMToolCall,
   LLMCompletionResult,
@@ -137,44 +138,22 @@ export class ToolExecutor implements IToolExecutor {
   }
 
   /**
-   * Call LLM with multi-turn messages.
-   * Uses provider.raw() with a system+user prompt that encodes the full history.
-   *
-   * Note: This serializes the conversation into the format expected by
-   * the provider's buildRequest. For proper multi-turn, the provider
-   * interface would need a messages-based API. This is a pragmatic
-   * workaround that maintains compatibility with ILLMProvider.raw().
+   * Call LLM with native multi-turn messages API.
    */
   private async callWithMessages(
     provider: ILLMProvider,
     messages: ConversationMessage[],
     tools: LLMTool[],
   ): Promise<LLMCompletionResult> {
-    // Extract system message
-    const systemMsg = messages.find((m) => m.role === 'system');
-    const system = systemMsg?.content ?? '';
+    // Convert internal messages to LLMMessage format
+    const llmMessages: LLMMessage[] = messages.map((m) => ({
+      role: m.role,
+      content: m.content,
+      name: m.name,
+      tool_call_id: m.toolCallId,
+    }));
 
-    // Build user content from conversation history (excluding system)
-    const historyParts: string[] = [];
-    for (const msg of messages) {
-      if (msg.role === 'system') continue;
-      if (msg.role === 'user') {
-        historyParts.push(msg.content);
-      } else if (msg.role === 'assistant') {
-        if (msg.toolCalls && msg.toolCalls.length > 0) {
-          const calls = msg.toolCalls.map((tc) => `[Called tool: ${tc.name}(${tc.arguments})]`).join('\n');
-          historyParts.push(`Assistant: ${msg.content}\n${calls}`);
-        } else {
-          historyParts.push(`Assistant: ${msg.content}`);
-        }
-      } else if (msg.role === 'tool') {
-        historyParts.push(`[Tool "${msg.name}" result]: ${msg.content}`);
-      }
-    }
-
-    const user = historyParts.join('\n\n');
-
-    return provider.raw({ system, user }, { jsonMode: true, tools });
+    return provider.messages(llmMessages, { jsonMode: true, tools });
   }
 
   private validateOutput<T>(content: string, schema: z.ZodSchema<T>): T {

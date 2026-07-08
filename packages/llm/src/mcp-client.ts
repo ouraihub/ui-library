@@ -72,6 +72,29 @@ export class MCPClient {
     this.servers.delete(name);
   }
 
+  /** Refresh tool list from a connected server (re-discovery) */
+  async refresh(name: string): Promise<number> {
+    const state = this.servers.get(name);
+    if (!state) {
+      throw new LLMError(`MCP server '${name}' is not connected`, 'mcp');
+    }
+    const tools = await this.discoverTools(state.config);
+    this.servers.set(name, { config: state.config, tools });
+    return tools.length;
+  }
+
+  /** Health check: ping a connected server */
+  async healthCheck(name: string): Promise<boolean> {
+    const state = this.servers.get(name);
+    if (!state) return false;
+    try {
+      await this.rpcCall(state.config, 'ping', {});
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
   /** Get all connected server names */
   getServerNames(): string[] {
     return Array.from(this.servers.keys());

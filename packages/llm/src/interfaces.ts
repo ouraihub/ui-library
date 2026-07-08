@@ -67,9 +67,10 @@ export interface LLMUsage {
 /**
  * LLM Provider — core interface.
  *
- * Two completion modes:
+ * Three completion modes:
  * - `complete<T>()` — structured output with Zod schema validation
  * - `raw()` — raw completion without schema enforcement
+ * - `messages()` — native multi-turn conversation (for tool call loops)
  */
 export interface ILLMProvider {
   /** Structured completion: prompt → validated T */
@@ -77,6 +78,9 @@ export interface ILLMProvider {
 
   /** Raw completion: prompt → string content */
   raw(prompt: LLMPrompt, options?: LLMCompletionOptions): Promise<LLMCompletionResult>;
+
+  /** Multi-turn completion: full message history → result (for tool call loops) */
+  messages(messages: readonly LLMMessage[], options?: LLMCompletionOptions): Promise<LLMCompletionResult>;
 }
 
 // ─── Tool Executor (for MCP support) ─────────────────────────────────────────

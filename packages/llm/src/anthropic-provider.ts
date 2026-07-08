@@ -5,7 +5,7 @@
  * Tool calling uses Anthropic's tool_use content blocks.
  */
 
-import type { LLMPrompt, LLMCompletionOptions, LLMCompletionResult, LLMToolCall } from './interfaces.js';
+import type { LLMPrompt, LLMMessage, LLMCompletionOptions, LLMCompletionResult, LLMToolCall } from './interfaces.js';
 import { BaseLLMProvider, type BaseLLMProviderConfig } from './base-provider.js';
 import type { LLMProviderConfig } from './interfaces.js';
 
@@ -37,13 +37,31 @@ export class AnthropicProvider extends BaseLLMProvider {
   }
 
   protected buildRequest(prompt: LLMPrompt, options?: LLMCompletionOptions): { url: string; init: RequestInit } {
+    const messages: Array<Record<string, unknown>> = [{ role: 'user', content: prompt.user }];
+    return this.buildAnthropicRequest(prompt.system, messages, options);
+  }
+
+  protected buildMessagesRequest(messages: readonly LLMMessage[], options?: LLMCompletionOptions): { url: string; init: RequestInit } {
+    const system = messages.find((m) => m.role === 'system')?.content ?? '';
+    const nonSystem = messages
+      .filter((m) => m.role !== 'system')
+      .map((m) => {
+        const msg: Record<string, unknown> = { role: m.role, content: m.content };
+        if (m.name) msg.name = m.name;
+        if (m.tool_call_id) msg.tool_call_id = m.tool_call_id;
+        return msg;
+      });
+    return this.buildAnthropicRequest(system, nonSystem, options);
+  }
+
+  private buildAnthropicRequest(system: string, messages: Array<Record<string, unknown>>, options?: LLMCompletionOptions): { url: string; init: RequestInit } {
     const url = `${this.baseUrl}/v1/messages`;
 
     const body: Record<string, unknown> = {
       model: this.model,
       max_tokens: options?.maxTokens ?? DEFAULT_MAX_TOKENS,
-      system: prompt.system,
-      messages: [{ role: 'user', content: prompt.user }],
+      system,
+      messages,
     };
 
     if (options?.temperature !== undefined) {

@@ -7,7 +7,7 @@
  *  - Tool calling (function calling format)
  */
 
-import type { LLMPrompt, LLMCompletionOptions, LLMCompletionResult, LLMToolCall } from './interfaces.js';
+import type { LLMPrompt, LLMMessage, LLMCompletionOptions, LLMCompletionResult, LLMToolCall } from './interfaces.js';
 import { BaseLLMProvider, type BaseLLMProviderConfig } from './base-provider.js';
 import type { LLMProviderConfig } from './interfaces.js';
 
@@ -39,12 +39,25 @@ export class OpenAIProvider extends BaseLLMProvider {
   }
 
   protected buildRequest(prompt: LLMPrompt, options?: LLMCompletionOptions): { url: string; init: RequestInit } {
-    const url = `${this.baseUrl}/chat/completions`;
-
-    const messages = [
+    const messages: Array<Record<string, unknown>> = [
       { role: 'system', content: prompt.system },
       { role: 'user', content: prompt.user },
     ];
+    return this.buildChatRequest(messages, options);
+  }
+
+  protected buildMessagesRequest(messages: readonly LLMMessage[], options?: LLMCompletionOptions): { url: string; init: RequestInit } {
+    const formatted = messages.map((m) => {
+      const msg: Record<string, unknown> = { role: m.role, content: m.content };
+      if (m.name) msg.name = m.name;
+      if (m.tool_call_id) msg.tool_call_id = m.tool_call_id;
+      return msg;
+    });
+    return this.buildChatRequest(formatted, options);
+  }
+
+  private buildChatRequest(messages: Array<Record<string, unknown>>, options?: LLMCompletionOptions): { url: string; init: RequestInit } {
+    const url = `${this.baseUrl}/chat/completions`;
 
     const body: Record<string, unknown> = {
       model: this.model,

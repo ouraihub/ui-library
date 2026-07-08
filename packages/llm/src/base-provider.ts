@@ -18,6 +18,7 @@ import type { z } from 'zod';
 import type {
   ILLMProvider,
   LLMPrompt,
+  LLMMessage,
   LLMCompletionOptions,
   LLMCompletionResult,
   LLMProviderConfig,
@@ -73,6 +74,16 @@ export abstract class BaseLLMProvider implements ILLMProvider {
   /** Raw completion without schema enforcement */
   async raw(prompt: LLMPrompt, options?: LLMCompletionOptions): Promise<LLMCompletionResult> {
     const { url, init } = this.buildRequest(prompt, options);
+    return this.executeRequest(url, init);
+  }
+
+  /** Multi-turn completion: native message history support */
+  async messages(messages: readonly LLMMessage[], options?: LLMCompletionOptions): Promise<LLMCompletionResult> {
+    const { url, init } = this.buildMessagesRequest(messages, options);
+    return this.executeRequest(url, init);
+  }
+
+  private async executeRequest(url: string, init: RequestInit): Promise<LLMCompletionResult> {
     const start = Date.now();
 
     this.logger.info('llm_request_start', {
@@ -126,6 +137,7 @@ export abstract class BaseLLMProvider implements ILLMProvider {
   // ─── Abstract hooks for subclasses ───────────────────────────────────────
 
   protected abstract buildRequest(prompt: LLMPrompt, options?: LLMCompletionOptions): { url: string; init: RequestInit };
+  protected abstract buildMessagesRequest(messages: readonly LLMMessage[], options?: LLMCompletionOptions): { url: string; init: RequestInit };
   protected abstract parseResponse(payload: unknown): LLMCompletionResult;
   protected abstract getDefaultBaseUrl(): string;
   protected abstract getDefaultModel(): string;
