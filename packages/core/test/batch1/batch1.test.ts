@@ -62,6 +62,35 @@ describe('BackToTop', () => {
     Object.defineProperty(document.documentElement, 'clientHeight', { value: 800, configurable: true });
     expect(btt.getScrollPercent()).toBe(0);
   });
+
+  it('does nothing when window is undefined (SSR)', () => {
+    const originalWindow = globalThis.window;
+    // @ts-ignore
+    delete (globalThis as any).window;
+    const btt = new BackToTop();
+    // init should early return
+    btt.init();
+    btt.destroy();
+    globalThis.window = originalWindow;
+  });
+
+  it('scrollToTop calls window.scrollTo', () => {
+    const scrollToMock = vi.fn();
+    vi.stubGlobal('scrollTo', scrollToMock);
+    window.scrollTo = scrollToMock;
+    const btt = new BackToTop({ smooth: true });
+    btt.scrollToTop();
+    expect(scrollToMock).toHaveBeenCalledWith({ top: 0, behavior: 'smooth' });
+
+    const btt2 = new BackToTop({ smooth: false });
+    btt2.scrollToTop();
+    expect(scrollToMock).toHaveBeenCalledWith({ top: 0, behavior: 'instant' });
+  });
+
+  it('destroy is safe when not initialized', () => {
+    const btt = new BackToTop();
+    expect(() => btt.destroy()).not.toThrow();
+  });
 });
 
 describe('initHeadingLinks', () => {
