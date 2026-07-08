@@ -7,7 +7,7 @@ describe('LazyLoader', () => {
   let intersectionCallback: IntersectionObserverCallback;
 
   beforeEach(() => {
-    mockIntersectionObserver = vi.fn((callback: IntersectionObserverCallback) => {
+    mockIntersectionObserver = vi.fn(function (this: any, callback: IntersectionObserverCallback) {
       intersectionCallback = callback;
       return {
         observe: vi.fn(),
