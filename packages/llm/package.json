@@ -1,6 +1,6 @@
 {
   "name": "@ouraihub/llm",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "LLM provider abstraction — OpenAI-compatible & Anthropic, with structured output, tool calling, and timeout control",
   "type": "module",
   "main": "./dist/cjs/index.cjs",
